@@ -1,0 +1,491 @@
+/* Project case studies. Built only from v4.css tokens and type styles, on the homepage's 12-column grid. */
+
+.v4 dl, .v4 dd { margin: 0; }
+.v4 ol, .v4 ul { list-style: none; margin: 0; padding: 0; }
+
+.v4 {
+  --chapter: clamp(64px, 7vw, 128px);   /* space above and below each chapter */
+  --block: clamp(28px, 2.6vw, 44px);    /* space between blocks inside a chapter */
+}
+
+/* ---------------- Hero ---------------- */
+
+/* Full-bleed photo under the text. The photo is desaturated and covered by an ink scrim that stays
+   light over the building and gets heavy at the bottom, where the title and facts sit. */
+.cs-hero {
+  position: relative; isolation: isolate; overflow: hidden;
+  min-height: calc(100svh - var(--bar));
+  display: flex;
+  color: var(--on-night);
+  background: var(--night);
+}
+.cs-hero__bg {
+  position: absolute; inset: 0; z-index: -1;
+  background-size: cover; background-repeat: no-repeat;   /* image and focal point come from the page (CaseHero) */
+  filter: saturate(0.65);
+  animation: cs-settle 1800ms var(--ease) both;
+}
+.cs-hero::after {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(18,18,18,0.40) 0%, rgba(18,18,18,0.18) 32%, rgba(18,18,18,0.50) 60%, rgba(18,18,18,0.90) 100%),
+    linear-gradient(90deg, rgba(18,18,18,0.35) 0%, rgba(18,18,18,0) 60%);
+}
+@keyframes cs-settle { from { transform: scale(1.06); } to { transform: none; } }
+
+.cs-hero__inner {
+  width: 100%;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding-top: clamp(160px, 30vh, 400px);
+  padding-bottom: clamp(32px, 4vw, 64px);
+}
+
+/* The title sits on a subgrid of the page grid, so each line can start on its own column. */
+.cs-hero__title {
+  grid-column: 1 / -1;
+  display: grid; grid-template-columns: subgrid;
+  text-indent: 0;
+}
+.cs-hero__line { grid-column: 1 / -1; white-space: nowrap; text-indent: -0.005em; }   /* W has almost no left bearing */
+.cs-hero__line.is-2 { grid-column: 3 / -1; text-indent: -0.08em; }                 /* M */
+.cs-hero__line.is-3 { grid-column: 5 / -1; text-indent: -0.05em; }                 /* S */
+.cs-hero__dot { color: var(--accent); }
+
+
+
+/* ---------------- Chapters ---------------- */
+
+/* Same split as the homepage Experience section: sticky number + title on cols 1–4, content on cols 5–12.
+   The content column is a subgrid, so every block inside starts and ends on a page column. */
+.cs-chapter__inner { padding: var(--chapter) 0; align-items: start; }
+/* No rules between chapters: the bento tiles and the spacing separate them. */
+
+.cs-aside {
+  grid-column: 1 / span 4;
+  position: sticky; top: calc(var(--bar) + 32px);
+  display: flex; flex-direction: column; gap: 16px;
+  padding-right: var(--col-gap);
+}
+.cs-aside h2 { text-wrap: balance; }
+/* The orange full stop of the hero and Contacts titles; on the orange Results band it turns light instead. */
+.cs-dot { color: var(--accent); }
+.is-accent .cs-dot { color: var(--paper); }
+.cs-body {
+  grid-column: 5 / -1;
+  display: grid; grid-template-columns: subgrid; align-content: start;
+  row-gap: var(--block);
+}
+.cs-body > * { grid-column: 1 / -1; }
+
+/* Body text at a readable measure. */
+.cs-body > .cs-text { grid-column: 1 / span 6; text-wrap: pretty; }
+
+/* Fact tiles in the content column, half of it each (cols 5–8 and 9–12): label at the top, value at
+   the bottom, like the homepage contact tiles. Tiles in a row share the row's height. */
+.cs-tiles { display: grid; grid-template-columns: subgrid; row-gap: var(--col-gap); }
+.cs-tile {
+  grid-column: span 4;
+  display: flex; flex-direction: column; gap: 16px;
+  padding: clamp(20px, 2vw, 32px);
+}
+.cs-tile.is-fact { justify-content: space-between; gap: 32px; min-height: clamp(150px, 12vw, 200px); }
+.cs-tile.is-fact dd { text-wrap: balance; }
+
+/* One tile across the content column (cols 5–12), items stacked with thin lines between, like the homepage
+   Experience tile. The text runs the tile's width but stops at a comfortable measure. */
+.v4 .cs-stack { padding: 0 clamp(20px, 2.4vw, 40px); }
+.cs-stack__item { display: flex; flex-direction: column; gap: 12px; padding: clamp(24px, 2.4vw, 40px) 0; }
+.cs-stack__item + .cs-stack__item { border-top: 1px solid var(--line); }
+.cs-stack__item h3 { text-wrap: balance; }
+.cs-stack__item p { max-width: 65ch; text-wrap: pretty; }
+
+/* Wide chapter: the title sits on top and the content gets all 12 columns. */
+.is-wide .cs-chapter__inner { row-gap: clamp(32px, 3.2vw, 56px); }
+/* The header is a subgrid: title on cols 1–8, the intro under it on cols 1–4 — the same width as the title column of
+   the regular chapters and the text column of the homepage Experience aside. */
+/* column-gap restates the page's: the base `gap: 16px` would otherwise narrow the subgrid's gaps and pull the intro
+   off its column. */
+.is-wide .cs-aside { grid-column: 1 / -1; position: static; padding-right: 0; display: grid; grid-template-columns: subgrid; align-items: start; row-gap: 16px; column-gap: var(--col-gap); }
+.is-wide .cs-aside h2 { grid-column: 1 / span 8; }
+.cs-aside__intro { grid-column: 1 / span 4; text-wrap: pretty; }
+/* In a wide chapter the intro sits to the right of the title (cols 9–12), both resting on the same bottom line. */
+.is-wide .cs-aside { align-items: end; }
+.is-wide .cs-aside__intro { grid-column: 9 / -1; grid-row: 1; }
+.is-wide .cs-body { grid-column: 1 / -1; }
+/* Closing text under a wide chapter's content takes the same four columns as the intro above it. */
+.is-wide .cs-body > .cs-text { grid-column: 1 / span 4; }
+
+/* Three tiles in a row (4 columns each), equal height. The illustration hangs in the bottom-right corner and runs
+   off the edge, cropped by the tile — the same treatment as the heart on the homepage cat tile. The bottom
+   padding keeps that corner free, so text never runs under the drawing. */
+.cs-cards { display: grid; grid-template-columns: subgrid; row-gap: var(--col-gap); }
+.cs-card {
+  grid-column: span 4;
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column; gap: 12px;
+  padding: clamp(20px, 2vw, 32px);
+  padding-bottom: clamp(180px, 15vw, 260px);
+}
+.cs-card h3 { text-wrap: balance; }
+.cs-card p { text-wrap: pretty; }
+/* Each drawing is offset on its own so enough of it stays inside the tile to be recognisable. */
+.cs-card__art {
+  position: absolute; right: var(--x, -10%); bottom: var(--y, -12%);
+  width: var(--w, 50%); max-width: var(--max, 240px); height: auto;
+  color: var(--accent); pointer-events: none;
+  transform: rotate(var(--r, -16deg));
+}
+.cs-card__art * { vector-effect: non-scaling-stroke; }
+.cs-card__art.is-rules { --w: 40%; --max: 200px; --x: -6%; --y: -9%; --r: -12deg; }
+/* The terminal is tall: narrower and tipped to the right, so its top runs off the edge and the keypad stays in view. */
+.cs-card__art.is-terminal { --w: 32%; --max: 160px; --x: -3%; --y: -7%; --r: 20deg; }
+.cs-card__art.is-shield { --w: 44%; --max: 210px; --x: -8%; --y: -10%; --r: -12deg; }
+
+/* Context of use: a bento like the homepage gallery. The vertical clip runs tall on cols 1–5; on cols 6–12
+   the text tile sits on top and the warehouse photo fills the rest of the height. */
+.cs-bento { display: grid; grid-template-columns: subgrid; gap: var(--col-gap); }
+/* width: 100% keeps the clip filling its five columns: when the height cap kicks in (shorter screens) the clip is
+   cropped top and bottom instead of narrowing — narrowing left an uneven gap next to the right column. */
+.cs-bento__main {
+  grid-column: 1 / span 5; width: 100%;
+  aspect-ratio: 9 / 16; max-height: min(calc(100svh - var(--bar) - 48px), 920px);
+}
+.cs-bento__side { grid-column: 6 / -1; display: flex; flex-direction: column; gap: var(--col-gap); }
+.cs-bento__text {
+  display: flex; flex-direction: column; gap: 16px;
+  padding: clamp(20px, 2vw, 32px);
+}
+.cs-bento__text p { text-wrap: pretty; }
+.cs-bento__photo { flex: 1 1 auto; min-height: 260px; }
+
+.cs-photo { position: relative; }
+.cs-photo__media { width: 100%; height: 100%; }
+.cs-photo__video { display: block; object-fit: cover; border-radius: var(--radius); background: var(--paper-2); }
+.cs-photo__cap {
+  position: absolute; left: 12px; bottom: 12px; max-width: calc(100% - 24px);
+  padding: 6px 12px; border-radius: 999px;
+  background: var(--tile); color: var(--ink-2);
+}
+
+/* Short lists inside a tile: an orange dot per item, no lines. */
+.v4 .cs-dots { display: flex; flex-direction: column; gap: 8px; }
+.cs-dots li { display: flex; align-items: baseline; gap: 12px; }
+.cs-dots li::before {
+  content: ''; flex: none; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); transform: translateY(-0.2em);
+}
+
+/* Key decisions reuse the homepage project stack (.stack in v4.css). These tiles aren't links, so no hover zoom;
+   the frame holds the placeholder caption until the real screens are added. */
+.cs-decisions .stack__frame { position: relative; }
+.cs-decisions .stack__panel:hover .stack__image { transform: none; }
+
+/* Terminal screens on a muted grey backdrop that fills the decision's image frame, labels on top.
+   The screens are anchored to the frame's bottom edge and pulled down past it, so exactly their top half shows
+   (the interface; the lower half is empty) whatever the frame's height. Percentages in margins resolve against the
+   frame's width, like the screens' own 42%:
+     screen height = 42% × 800/480 = 70% of the width → half of it = 35%  (margin-bottom: -35%)
+     the arrow sits --arrow-at of the way down the screen (default 0.41, the main button's centre), i.e.
+     (0.5 − arrow-at) × 70% of the width above the frame's edge. */
+.cs-screens {
+  width: 100%; height: 100%;
+  display: flex; align-items: flex-end; justify-content: center; gap: clamp(10px, 1.6vw, 28px);
+  padding: clamp(16px, 2vw, 32px) clamp(16px, 2.4vw, 40px) 0;
+  background: #e2e0da;
+}
+/* .v4 prefix: the homepage resets figure margins with `.v4 figure`, which would cancel the pull-down. */
+.v4 .cs-screen {
+  flex: none; width: 42%; margin-bottom: -35%;
+  display: flex; flex-direction: column; align-items: center; gap: clamp(12px, 1.4vw, 20px);
+}
+.cs-screen img {
+  width: 100%; height: auto;
+  border-radius: clamp(8px, 1vw, 16px);
+  box-shadow: 0 24px 48px -24px rgba(18, 18, 18, 0.45), 0 2px 6px rgba(18, 18, 18, 0.12);
+}
+/* The phrase never breaks; on narrow frames it drops under the keys as a whole. */
+.cs-screen figcaption { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 8px; color: var(--ink-2); }
+.cs-screen__label { white-space: nowrap; }
+.cs-screen__n {
+  width: 22px; height: 22px; border-radius: 50%;
+  display: inline-grid; place-items: center;
+  background: var(--ink); color: var(--paper); font-size: 12px; font-weight: 500;
+}
+.cs-screens__arrow {
+  flex: none; width: 44px; height: 44px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--tile); color: var(--ink);
+  margin-bottom: calc((0.5 - var(--arrow-at, 0.41)) * 70% - 22px);
+}
+/* Split picture: two halves of one screen. The left shows the top half and runs off the bottom edge (as above);
+   the right shows the bottom half and runs off the top edge, its label moved under it. No vertical padding,
+   so each shows exactly half a screen. */
+.cs-screens.is-split { padding-top: 0; gap: clamp(16px, 4vw, 64px); }
+.v4 .cs-screen.is-bottom { align-self: flex-start; margin-bottom: 0; margin-top: -35%; flex-direction: column-reverse; }
+/* Keycaps in the labels, echoing the terminal's physical keys. */
+.cs-key {
+  min-width: 26px; height: 26px; padding: 0 7px;
+  display: inline-grid; place-items: center;
+  border-radius: 6px; background: var(--tile); color: var(--ink);
+  box-shadow: inset 0 -2px 0 rgba(18, 18, 18, 0.18), 0 1px 2px rgba(18, 18, 18, 0.12);
+  font-family: inherit; font-size: 12px; font-weight: 500; line-height: 1; letter-spacing: 0.02em;
+}
+
+/* Device picture: the screens sit in the terminal photo. Devices hang from the top under their labels and run off
+   the bottom edge — the screen and the top keys show.
+   The arrow sits --arrow-at of the way down the screenshot. In the 555×1342 frame the app area starts 13.86% down
+   and the screenshot is 47.82% of the device's height; the device is 2.418× as tall as it is wide, and margin
+   percentages resolve against the width — hence (0.1386 + at × 0.4782) × 2.418 = 0.3351 + at × 1.1563. */
+.cs-screens.is-device {
+  --dev: 36%;
+  --cap: calc(22px + clamp(12px, 1.4vw, 20px));
+  align-items: flex-start; padding-top: clamp(20px, 2.6vw, 44px);
+}
+.v4 .cs-screen.is-device { width: var(--dev); margin-bottom: 0; }
+.cs-device { position: relative; display: block; width: 100%; }
+.cs-screen.is-device img { border-radius: 0; box-shadow: none; }
+.cs-device__frame { display: block; width: 100%; height: auto; filter: drop-shadow(0 28px 36px rgba(18, 18, 18, 0.28)); }
+/* The app area in the photo: between the status bar and the navigation bar (measured on the 555×1342 frame). */
+.cs-device__screen {
+  position: absolute; left: 15.676%; top: 13.86%; width: 69.369%; height: 34.426%;
+  overflow: hidden; background: rgb(45, 53, 65);   /* the screenshot's own header colour, under its rounded corners */
+}
+.cs-device__screen img { display: block; width: 100%; height: auto; }
+.is-device .cs-screens__arrow { align-self: flex-start; margin-bottom: 0; margin-top: calc(var(--cap) + var(--dev) * (0.3351 + var(--arrow-at, 0.411) * 1.1563) - 22px); }
+/* Split device picture: the left device hangs from the top and runs off the bottom; the right one stands on the
+   bottom edge, label under it, and runs off the top — its screen scrolled to the bottom (the SHIFT bar) above the
+   full keypad. */
+.cs-screens.is-device.is-split { padding-bottom: clamp(20px, 2.6vw, 44px); }
+.v4 .cs-screen.is-device.is-bottom { align-self: flex-end; margin-top: 0; }
+.is-bottom .cs-device__screen { display: flex; flex-direction: column; justify-content: flex-end; }
+.is-bottom .cs-device__screen img { flex: none; }
+
+.cs-paras { display: flex; flex-direction: column; gap: 12px; }
+.cs-paras p { text-wrap: pretty; }
+
+/* Flow: bento tiles in a row (five equal columns across the content width) with an arrow chip in each gap.
+   The gap is wider than the page's column gap so the arrow fits inside it without touching either tile.
+   The tiles crop their illustration (overflow hidden); the arrow lives on the list item, outside the tile. */
+.v4 .cs-flow {
+  --flow-gap: clamp(44px, 4vw, 64px);
+  --arrow: clamp(28px, 2.4vw, 36px);
+  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--flow-gap);
+}
+.cs-flow__item { position: relative; display: flex; }
+.cs-step {
+  flex: 1; position: relative; overflow: hidden;
+  min-height: clamp(200px, 17vw, 280px);
+  padding: clamp(18px, 1.6vw, 28px);
+  padding-bottom: clamp(110px, 9vw, 150px);
+}
+.cs-step span { position: relative; z-index: 1; display: block; text-wrap: balance; }
+.cs-step__art {
+  position: absolute; z-index: 1; right: -14%; bottom: -16%;
+  width: 62%; max-width: 170px; height: auto;
+  color: var(--accent); transform: rotate(-12deg); pointer-events: none;
+}
+.cs-flow__item:nth-child(even) .cs-step__art { transform: rotate(10deg); }
+.cs-step__art * { vector-effect: non-scaling-stroke; }
+.cs-flow__arrow svg { width: 60%; height: 60%; }
+.cs-flow__arrow {
+  position: absolute; z-index: 1; top: 50%; right: calc(var(--flow-gap) / -2); transform: translate(50%, -50%);
+  width: var(--arrow); height: var(--arrow); border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--ink); color: var(--paper);
+}
+
+/* ---------------- Results: accent chapter ---------------- */
+
+/* The homepage About treatment: a full-width orange band with rounded corners and tile-sized padding, holding
+   light bento tiles. Stats are four tiles in a row (3 columns each), number on top and its label at the bottom;
+   the warehouse reports sit in one wide tile under them. Tiles keep the standard bento gap between them. */
+.cs-chapter.is-accent { background: var(--accent); color: var(--on-accent); border-radius: var(--radius-band); }
+.is-accent .cs-chapter__inner { padding: clamp(48px, 5vw, 88px) 0; }
+.is-accent .cs-body { row-gap: var(--col-gap); }
+
+.cs-stats { display: grid; grid-template-columns: subgrid; gap: var(--col-gap); }
+.cs-stat {
+  grid-column: span 3;
+  display: flex; flex-direction: column; justify-content: space-between; gap: 32px;
+  min-height: clamp(180px, 15vw, 260px);
+  padding: clamp(20px, 2vw, 32px);
+}
+.cs-stat__value { text-indent: -0.04em; }
+/* A stat that is a status rather than a number (WMS "Pilot"). */
+.cs-stat.is-note .cs-stat__value { color: var(--accent-ink); }
+.cs-stat .t-body { text-wrap: pretty; }
+
+.cs-reports { display: flex; flex-direction: column; gap: 20px; padding: clamp(20px, 2vw, 32px); }
+.cs-reports p { max-width: 52ch; text-wrap: pretty; }
+.v4 .cs-reports .cs-dots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px var(--col-gap); }
+.cs-reports .cs-dots li { text-wrap: pretty; }
+
+/* ---------------- Figures (Vlife) ---------------- */
+
+/* An image on the muted backdrop, caption underneath. With .is-pad the backdrop shows around the image;
+   with .is-fit the frame takes the height of its grid row and the image is fitted inside it. */
+.cs-fig { --pad: 0px; display: flex; flex-direction: column; gap: 12px; }
+.cs-fig.is-pad { --pad: clamp(16px, 2vw, 32px); }
+.cs-fig__frame {
+  position: relative; display: block; overflow: hidden;
+  padding: var(--pad);
+  border-radius: var(--radius); background: var(--paper-2);
+}
+.cs-fig__frame img { display: block; width: 100%; height: auto; }
+.cs-fig.is-fit .cs-fig__frame { flex: 1 1 auto; min-height: 0; }
+.cs-fig.is-fit .cs-fig__frame img {
+  position: absolute; top: var(--pad); left: var(--pad);
+  width: calc(100% - 2 * var(--pad)); height: calc(100% - 2 * var(--pad));
+  object-fit: contain;
+}
+.cs-fig figcaption { color: var(--ink-2); max-width: 60ch; text-wrap: pretty; }
+/* A tall, roughly square picture: centred on eight columns so it doesn't run a full screen high. */
+.cs-body > .cs-fig.is-center { grid-column: 3 / span 8; }
+
+.cs-link { display: inline-flex; align-items: center; gap: 8px; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+.cs-link:hover { color: var(--accent-ink); }
+.cs-links { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+
+/* The app before the redesign: a bento on the page columns, in two rows. Each row has two grid rows — frames, then
+   captions — and every figure spans both on a subgrid, so the frames end on one line whatever their captions' length.
+   Top row: the wide shot sets the height and the shot beside it fits into it. Bottom row: two single phone screens
+   (given a height of their own) and a text tile as tall as their frames. */
+.cs-shots { display: grid; grid-template-columns: subgrid; row-gap: var(--block); }
+.cs-shots__row { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; grid-template-rows: auto auto; row-gap: 12px; }
+.cs-shots__row > .cs-fig { grid-row: span 2; display: grid; grid-template-rows: subgrid; }
+.cs-shots__row > .is-7 { grid-column: span 7; }
+.cs-shots__row > .is-5 { grid-column: span 5; }
+.cs-shots__row > .is-3 { grid-column: span 3; }
+.cs-shots__row > .is-tall .cs-fig__frame { min-height: clamp(380px, 36vw, 600px); }
+.cs-shots__note {
+  grid-column: 7 / span 6; grid-row: 1;   /* the frames row only, right of the phone screens */
+  display: flex; flex-direction: column; justify-content: space-between; gap: 24px;
+  padding: clamp(20px, 2vw, 32px);
+}
+.cs-shots__note p { text-wrap: pretty; max-width: 52ch; }
+/* The app's turns as a short timeline: a ring per direction joined by a thin line, the last one filled orange —
+   where it settled. Each ring is centred on the first line of its item (0.5lh of the item's own type size). */
+.v4 .cs-turns { --gap: clamp(16px, 1.8vw, 28px); --ring: 14px; display: flex; flex-direction: column; gap: var(--gap); }
+.cs-turns li { --ring-top: calc(0.5lh - var(--ring) / 2); position: relative; display: flex; flex-direction: column; gap: 4px; padding-left: calc(var(--ring) + 18px); }
+.cs-turns li::before {
+  content: ''; position: absolute; left: 0; top: var(--ring-top); z-index: 1;
+  width: var(--ring); height: var(--ring); box-sizing: border-box; border-radius: 50%;
+  border: 2px solid var(--accent); background: var(--tile);
+}
+.cs-turns li.is-now::before { background: var(--accent); }
+.cs-turns li:not(:last-child)::after {
+  content: ''; position: absolute; left: calc(var(--ring) / 2 - 1px); width: 2px;
+  top: calc(var(--ring-top) + var(--ring)); height: calc(100% + var(--gap) - var(--ring));
+  background: var(--line);
+}
+
+/* Results evidence: the Crashlytics chart and the remaining results side by side, half the width each. */
+.cs-evidence { display: grid; grid-template-columns: subgrid; gap: var(--col-gap); }
+.cs-evidence > * { grid-column: span 6; }
+.v4 .cs-evidence__shot { padding: clamp(12px, 1.4vw, 20px); display: grid; place-items: center; }
+.cs-evidence__shot img { display: block; width: 100%; height: auto; border-radius: var(--radius-in); }
+.v4 .cs-evidence .cs-reports .cs-dots { grid-template-columns: minmax(0, 1fr); }
+
+/* ---------------- Qazaq Energy Charge ---------------- */
+
+/* Two station screens side by side in the shots bento (6 columns each). */
+.cs-shots__row > .is-6 { grid-column: span 6; }
+
+/* Before / After chip in the frame's corner; "After" in the accent. A photo (rather than a screen, which has its own
+   corners) gets the inner radius so it sits in the frame like the screens do. */
+.cs-fig__tag {
+  position: absolute; z-index: 1; top: 12px; left: 12px;
+  padding: 4px 12px; border-radius: 999px;
+  background: var(--ink); color: var(--paper); font-weight: 500;
+}
+.cs-fig:not(.is-photo) .cs-fig__tag { background: var(--accent); color: var(--on-accent); }
+.cs-fig.is-photo .cs-fig__frame img { border-radius: var(--radius-in); }
+
+/* A chapter's opening line, across the whole content column — edge to edge with the tiles under it. */
+.cs-body > .cs-lede { grid-column: 1 / -1; text-wrap: pretty; }
+
+/* Main screen: the homepage project stack. The screen sits on the muted backdrop in the frame; an SVG on top dims
+   everything outside the part in question and outlines it in orange. */
+.cs-tour .stack__frame { display: grid; place-items: center; padding: clamp(16px, 2.4vw, 40px); background: var(--paper-2); }
+.cs-tour__screen { position: relative; display: block; width: 100%; }
+.cs-tour__screen img { display: block; width: 100%; height: auto; }
+.cs-tour__focus { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cs-tour__dim { fill: rgba(18, 18, 18, 0.62); }
+.cs-tour__zone { fill: none; stroke: var(--accent); stroke-width: 2px; vector-effect: non-scaling-stroke; }
+.cs-tour .stack__text .t-label { color: var(--accent-ink); }
+
+/* ---------------- Other projects ---------------- */
+
+/* The homepage section head (title + button over a strong rule), then the "Latest project" plaques. */
+.cs-others { padding-top: var(--chapter); }
+/* No rule under the heading, like the homepage Projects head. */
+.cs-others .section-head { border-bottom: 0; }
+.v4 .cs-others__list { margin-top: clamp(24px, 2.4vw, 40px); display: flex; flex-direction: column; gap: 12px; }
+.v4 .cs-others .latest { margin-top: 0; }
+
+/* ---------------- Responsive ---------------- */
+
+@media (max-width: 1024px) {
+  .cs-hero__line.is-2 { grid-column: 2 / -1; }
+  .cs-hero__line.is-3 { grid-column: 3 / -1; }
+
+  /* Chapters: title above, content below on the full 12 columns (rows split 5 / 7 like the homepage jobs). */
+  .cs-chapter__inner { row-gap: clamp(24px, 4vw, 40px); }
+  .cs-aside { grid-column: 1 / -1; position: static; padding-right: 0; }
+  .is-wide .cs-aside h2 { grid-column: 1 / -1; }
+  .cs-aside__intro, .is-wide .cs-body > .cs-text { grid-column: 1 / span 8; }
+  .is-wide .cs-aside { align-items: start; }
+  .is-wide .cs-aside__intro { grid-column: 1 / span 8; grid-row: auto; }
+  .cs-body { grid-column: 1 / -1; }
+  .cs-body > .cs-text { grid-column: 1 / span 9; }
+  .cs-stat, .cs-tile { grid-column: span 6; }
+  /* Flow: one tile per row, arrows point down between them. */
+  .v4 .cs-flow { grid-template-columns: minmax(0, 1fr); }
+  .cs-step { min-height: 104px; padding-bottom: clamp(18px, 1.6vw, 28px); padding-right: 140px; }
+  .cs-step__art { width: 112px; right: -8px; bottom: -34px; }
+  .cs-flow__arrow { top: auto; right: 50%; bottom: calc(var(--flow-gap) / -2); transform: translate(50%, 50%) rotate(90deg); }
+  /* Context bento: clip and the side column split the width in half. */
+  .cs-bento__main { grid-column: 1 / span 6; }
+  .cs-bento__side { grid-column: 7 / span 6; }
+  /* Tiles stack full width; the drawing moves to the right side and the text keeps clear of it. */
+  .cs-card { grid-column: 1 / -1; padding-bottom: clamp(20px, 2vw, 32px); padding-right: 36%; min-height: 220px; }
+  .cs-card__art { width: 26%; right: -4%; bottom: -16%; }
+  /* Figures: wide shots and the text tile take the full width; phone screens go two to a row. */
+  .cs-body > .cs-fig.is-center { grid-column: 1 / -1; }
+  .cs-shots__row > .is-7, .cs-shots__row > .is-5, .cs-shots__note, .cs-evidence > * { grid-column: 1 / -1; }
+  .cs-shots__row > .is-5 .cs-fig__frame { aspect-ratio: 1400 / 1478; }
+  .cs-shots__row > .is-3 { grid-column: span 6; }
+  /* Stacked items start a new pair of grid rows; restore the block spacing above them. */
+  .cs-shots__row > .is-5, .cs-shots__note { margin-top: calc(var(--block) - 12px); }
+  .cs-shots__note { grid-row: 3; }
+  /* Station screens stack full width. */
+  .cs-shots__row > .is-6 { grid-column: 1 / -1; }
+  .cs-shots__row > .is-6 + .is-6 { margin-top: calc(var(--block) - 12px); }
+}
+
+@media (max-width: 640px) {
+  .cs-hero__line.is-2 { grid-column: 3 / -1; }
+  .cs-hero__line.is-3 { grid-column: 5 / -1; }
+
+  .cs-body > .cs-text, .cs-tile { grid-column: 1 / -1; }
+  .v4 .cs-reports .cs-dots { grid-template-columns: minmax(0, 1fr); }
+  /* Stats: one per row, number on the left and its label beside it — a 2×2 grid leaves the labels too narrow. */
+  .cs-stat { grid-column: 1 / -1; min-height: 0; flex-direction: row; align-items: center; gap: 20px; }
+  .cs-stat__value { flex: 0 0 36%; }
+  .cs-aside__intro, .is-wide .cs-aside__intro, .is-wide .cs-body > .cs-text { grid-column: 1 / -1; }
+  .cs-tile.is-fact { min-height: 0; gap: 16px; }
+  /* Phone: text first, then the clip, then the photo. */
+  .cs-bento__main, .cs-bento__text, .cs-bento__photo { grid-column: 1 / -1; }
+  .cs-bento__side { display: contents; }
+  .cs-bento__text { order: -1; }
+  .cs-bento__main { max-height: 80svh; }
+  .cs-bento__photo { aspect-ratio: 4 / 3; min-height: 0; }
+  /* Back to the bottom corner, with the same per-drawing sizes as on desktop. */
+  .cs-card { padding-right: clamp(20px, 2vw, 32px); padding-bottom: 170px; min-height: 0; }
+  .cs-card__art { width: var(--w, 50%); right: var(--x, -10%); bottom: var(--y, -12%); }
+  .cs-screens__arrow { width: 32px; height: 32px; margin-bottom: calc((0.5 - var(--arrow-at, 0.41)) * 70% - 16px); }
+  /* Devices are tall: a taller frame and larger devices keep the screens readable on a phone. */
+  .cs-decisions .stack__frame:has(.is-device) { aspect-ratio: 4 / 5; }
+  .cs-screens.is-device { --dev: 44%; }
+  .is-device .cs-screens__arrow { margin-top: calc(var(--cap) + var(--dev) * (0.3351 + var(--arrow-at, 0.411) * 1.1563) - 16px); }
+}

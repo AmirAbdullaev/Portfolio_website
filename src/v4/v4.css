@@ -1,0 +1,412 @@
+/* Portfolio v4 — light editorial layout. Only the typeface (Onest) carries over from v3. */
+
+:root {
+  /* colour */
+  --paper: #f2f0eb;
+  --paper-2: #e7e4dc;
+  --ink: #121212;
+  --ink-2: #4f4c46;   /* 7.4:1 on paper */
+  --ink-3: #75716a;   /* 4.6:1 on paper — labels only */
+  --line: rgba(18, 18, 18, 0.14);
+  --line-strong: rgba(18, 18, 18, 0.32);
+  --accent: #ff5a1f;
+  --accent-ink: #ec4a14;   /* accent as text on paper: 3.3:1, passes for large type (#ff5a1f is only 2.7:1) */
+  --on-accent: #121212;
+  --night: #121212;
+  --night-2: #1d1d1c;
+  --on-night: #f2f0eb;
+  --on-night-2: #a9a59c;
+  --night-line: rgba(242, 240, 235, 0.14);
+
+  /* grid — one 12-column grid for the whole site */
+  --max: 1680px;
+  --gutter: clamp(20px, 4vw, 64px);
+  --col-gap: clamp(16px, 2vw, 32px);
+  --section: clamp(96px, 11vw, 200px);
+  /* Bento tiles: one radius everywhere. Things nested in a tile use --radius-in so the corners stay concentric. */
+  --radius: clamp(16px, 1.5vw, 24px);
+  --tile: #fbfaf8;
+  --tile-line: rgba(18, 18, 18, 0.07);
+  --tile-shadow-hover: 0 24px 56px -28px rgba(18, 18, 18, 0.26), 0 6px 16px -8px rgba(18, 18, 18, 0.08);
+  --tile-shadow-ease: 500ms cubic-bezier(0.33, 1, 0.68, 1);   /* soft ease-out, both ways */
+  --tile-pad: clamp(12px, 1.2vw, 20px);
+  --radius-in: max(8px, calc(var(--radius) - var(--tile-pad)));
+  --radius-band: clamp(28px, 3vw, 48px);   /* full-width tiles (About) */
+  --bar: 64px;
+
+  /* type scale — 7 styles, 2 weights (400 / 500) */
+  --t-xl: clamp(44px, 7vw, 128px);
+  --t-l: clamp(32px, 4.4vw, 80px);
+  --t-m: clamp(22px, 2vw, 32px);
+  --t-lead: clamp(18px, 1.4vw, 22px);
+  --t-body: clamp(16px, 1.1vw, 18px);
+  --t-small: 14px;
+  --t-label: 13px;   /* sentence case, no caps: 13px keeps it readable without the tracking caps needed */
+
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+/* overflow-anchor: none — every image reserves its space up front, so there are no layout jumps to
+   compensate for; left on, the browser's scroll anchoring knocked `/#section` links ~70px off target. */
+html { scroll-behavior: smooth; scroll-padding-top: var(--bar); overflow-anchor: none; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Onest', Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+::selection { background: var(--accent); color: var(--on-accent); }
+
+.v4 { font-size: var(--t-body); line-height: 1.6; }
+.v4 a { color: inherit; text-decoration: none; }
+.v4 :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 2px; }
+.v4 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: inherit; }
+.v4 h1, .v4 h2, .v4 h3, .v4 p, .v4 blockquote, .v4 figure { margin: 0; }
+/* …but a figure that is also the page container must stay centred. */
+.v4 figure.wrap { margin: 0 auto; }
+
+/* ---------- type styles (the only place sizes are set) ---------- */
+
+.t-xl    { font-size: var(--t-xl);    line-height: 0.95; letter-spacing: -0.05em; font-weight: 500; }
+.t-l     { font-size: var(--t-l);     line-height: 1.02; letter-spacing: -0.04em; font-weight: 500; }
+.t-m     { font-size: var(--t-m);     line-height: 1.1;  letter-spacing: -0.03em; font-weight: 500; }
+.t-lead  { font-size: var(--t-lead);  line-height: 1.4;  letter-spacing: -0.01em; }
+.t-body  { font-size: var(--t-body);  line-height: 1.6;  letter-spacing: 0; }
+.t-small { font-size: var(--t-small); line-height: 1.4;  letter-spacing: 0; }
+.t-label { font-size: var(--t-label); line-height: 1.3; letter-spacing: 0; font-weight: 500; }
+.w-500 { font-weight: 500; }
+
+.muted { color: var(--ink-2); }
+.t-label { color: var(--ink-3); }
+
+/* ---------- layout ---------- */
+
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--col-gap); }
+
+.section-head {
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 24px;
+  padding-bottom: clamp(24px, 2.4vw, 40px);
+  border-bottom: 1px solid var(--line-strong);
+}
+
+/* A bento tile: light surface, hairline edge, the shared radius. On hover every tile lifts with a soft shadow. */
+.tile { background: var(--tile); border: 1px solid var(--tile-line); border-radius: var(--radius); transition: box-shadow var(--tile-shadow-ease); }
+/* Tiles that also reveal on scroll: the reveal rule sets `transition` too and would replace the shadow transition
+   (the shadow then snapped on instantly). Keep both: the reveal with its stagger delay, the shadow with none. */
+.tile[data-reveal] {
+  transition: opacity 700ms var(--ease) var(--d, 0ms), transform 700ms var(--ease) var(--d, 0ms), box-shadow var(--tile-shadow-ease) 0ms;
+}
+@media (hover: hover) {
+  .tile:hover { box-shadow: var(--tile-shadow-hover); }
+  /* Stacked project tiles keep their upward stacking shadow and add the hover one. */
+  .stack__panel.tile:hover { box-shadow: 0 -12px 32px -22px rgba(18, 18, 18, 0.3), var(--tile-shadow-hover); }
+}
+
+/* Image frames show a hatched placeholder until the real file is in /public/assets. */
+.media {
+  position: relative; overflow: hidden;
+  border-radius: var(--radius);
+  background-color: var(--paper-2);
+  background-image: var(--img), repeating-linear-gradient(135deg, transparent 0 14px, rgba(18,18,18,0.045) 14px 15px);
+  background-size: var(--size, cover), auto;
+  background-position: var(--pos, center), 0 0;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 44px; padding: 0 20px;
+  border-radius: 999px; white-space: nowrap;
+  transition: background-color 200ms var(--ease), color 200ms var(--ease), border-color 200ms var(--ease);
+}
+.btn svg { flex: none; transition: transform 240ms var(--ease); }
+.v4 .btn-ink { background: var(--ink); color: var(--paper); }
+.v4 .btn-ink:hover { background: var(--accent); color: var(--on-accent); }
+.v4 .btn-line { border: 1px solid var(--line-strong); }
+.v4 .btn-line:hover { border-color: var(--ink); background: var(--ink); color: var(--paper); }
+.btn:hover .i-ne { transform: translate(2px, -2px); }
+.btn:hover .i-down { transform: translateY(2px); }
+.btn:hover .i-e { transform: translateX(3px); }
+
+/* Reveal on scroll. Driven by a data attribute (not a class) so React re-renders don't reset it. */
+[data-reveal] { opacity: 0; transform: translateY(24px); transition: opacity 700ms var(--ease), transform 700ms var(--ease); transition-delay: var(--d, 0ms); }
+[data-reveal][data-in] { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  [data-reveal] { opacity: 1; transform: none; }
+}
+
+/* Dev-only 12-column overlay (Shift + G) */
+.grid-overlay { position: fixed; inset: 0; z-index: 100; pointer-events: none; }
+.grid-overlay .grid { height: 100%; }
+.grid-overlay .grid > span { background: rgba(255, 90, 31, 0.08); border-left: 1px solid rgba(255, 90, 31, 0.3); border-right: 1px solid rgba(255, 90, 31, 0.3); }
+
+/* ---------------- Top bar ---------------- */
+
+.topbar {
+  position: sticky; top: 0; z-index: 30;
+  background: rgba(242, 240, 235, 0.86);
+  backdrop-filter: saturate(160%) blur(14px);
+  -webkit-backdrop-filter: saturate(160%) blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+.topbar__inner { height: var(--bar); display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.brand { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; }
+.brand__mark {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: inline-grid; place-items: center;
+  background: var(--ink); color: var(--paper);
+  letter-spacing: 0.02em;
+}
+.nav { display: flex; align-items: center; gap: 4px; }
+.nav a {
+  position: relative;
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px;
+  color: var(--ink-2);
+  transition: color 200ms var(--ease);
+}
+.nav a::after {
+  content: ''; position: absolute; left: 14px; right: 14px; bottom: 10px; height: 1.5px;
+  background: var(--accent); transform: scaleX(0); transform-origin: left;
+  transition: transform 300ms var(--ease);
+}
+.nav a:hover, .nav a[aria-current='true'] { color: var(--ink); }
+.nav a:hover::after, .nav a[aria-current='true']::after { transform: scaleX(1); }
+.topbar__actions { display: flex; align-items: center; gap: 8px; }
+.menu-btn { display: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line-strong); place-items: center; }
+
+.sheet {
+  position: fixed; inset: var(--bar) 0 auto 0; z-index: 29;
+  background: var(--paper); border-bottom: 1px solid var(--line-strong);
+  padding: 8px var(--gutter) 24px;
+  transform: translateY(-8px); opacity: 0; visibility: hidden;
+  transition: opacity 200ms var(--ease), transform 200ms var(--ease), visibility 0s 200ms;
+}
+.sheet.is-open { transform: none; opacity: 1; visibility: visible; transition-delay: 0s; }
+.sheet a { display: flex; align-items: center; justify-content: space-between; min-height: 56px; border-bottom: 1px solid var(--line); }
+
+/* ---------------- Hero ---------------- */
+
+.hero { padding-top: clamp(40px, 6vw, 96px); }
+.hero__body { align-items: end; row-gap: 32px; }
+.hero__text { grid-column: 1 / span 8; display: flex; flex-direction: column; gap: clamp(16px, 1.6vw, 24px); }
+.mark { color: var(--accent-ink); white-space: nowrap; }
+.hero__portrait { grid-column: 9 / span 4; aspect-ratio: 4 / 5; }
+
+/* Latest-project banner — kept for later, not rendered right now (see SHOW_LATEST). */
+.v4 .latest {
+  margin-top: clamp(40px, 5vw, 80px);
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--col-gap);
+  padding: 16px;
+  background: var(--ink); color: var(--paper);
+  border-radius: var(--radius);
+  transition: background-color 260ms var(--ease), color 260ms var(--ease);
+}
+.latest__thumb { width: clamp(88px, 10vw, 168px); aspect-ratio: 16 / 10; background-color: var(--night-2); }
+.latest__text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.latest .t-label { color: var(--on-night-2); }
+.latest__arrow { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--night-line); transition: transform 300ms var(--ease), border-color 260ms var(--ease); }
+.v4 .latest:hover { background: var(--accent); color: var(--on-accent); }
+.latest:hover .t-label { color: var(--ink); }
+.latest:hover .latest__arrow { transform: rotate(45deg); border-color: var(--ink); }
+
+/* ---------------- Projects ---------------- */
+
+/* Stacking tiles: every project is a rounded tile that sticks a little lower than the previous one,
+   so the rounded top edges of the earlier tiles stay visible as a stack. */
+.projects { padding-top: var(--section); }
+.projects .section-head { border-bottom: 0; }
+.stack { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: clamp(24px, 3vw, 48px); }
+/* --stick-max is set from JS (useStickyFit) for tiles taller than the viewport. */
+.stack__item { position: sticky; top: min(calc(var(--bar) + 24px + var(--i) * 14px), var(--stick-max, 100vh)); }
+.stack__panel {
+  align-items: stretch;
+  padding: var(--tile-pad);
+  box-shadow: 0 -12px 32px -22px rgba(18, 18, 18, 0.3);
+}
+.stack__frame { grid-column: 1 / span 8; overflow: hidden; border-radius: var(--radius-in); aspect-ratio: 16 / 10; max-height: calc(100vh - var(--bar) - 120px - 2 * var(--tile-pad)); width: 100%; }
+.stack__image { width: 100%; height: 100%; border-radius: 0; transition: transform 900ms var(--ease); }
+/* The tile's own padding is taller than the 14px peek strip, so only tile edges show in the stack. */
+.stack__text { grid-column: 9 / span 4; display: flex; flex-direction: column; gap: 16px; padding: 8px 8px 4px 0; }
+.stack__desc { display: flex; flex-direction: column; gap: 12px; }
+.stack__para { display: block; text-wrap: pretty; }
+.stack__cta { margin-top: 8px; align-self: flex-start; }
+.stack__panel:hover .stack__image, .stack__panel:focus-visible .stack__image { transform: scale(1.03); }
+/* Hovering anywhere on the tile puts its button into the normal secondary-button hover state. */
+.v4 .stack__panel:hover .btn-line, .v4 .stack__panel:focus-visible .btn-line { border-color: var(--ink); background: var(--ink); color: var(--paper); }
+.stack__panel:hover .btn .i-ne, .stack__panel:focus-visible .btn .i-ne { transform: translate(2px, -2px); }
+
+/* Optical alignment: big glyphs carry side bearing, so the ink starts right of the grid line.
+   Values are each first letter's measured left bearing in Onest. */
+.t-l, .t-xl { text-indent: -0.075em; }          /* E, P, A … */
+#hero-title { text-indent: -0.03em; }           /* 4 */
+/* Straight after the orange About tile there is no gap: Contacts slides up under its rounded bottom corners so they
+   sit on black, not on the paper background. Elsewhere (case study) the normal gap stays. */
+.about + .contacts { margin-top: calc(-1 * var(--radius-band)); padding-top: calc(var(--section) + var(--radius-band)); }
+.contacts__title { text-indent: -0.04em; }      /* C */
+#about-title { text-indent: 0; }                /* A — no left bearing */
+
+/* ---------------- Experience ---------------- */
+
+.experience { padding-top: var(--section); }
+.experience__aside { grid-column: 1 / span 4; position: sticky; top: calc(var(--bar) + 32px); align-self: start; display: flex; flex-direction: column; gap: 20px; padding-right: var(--col-gap); }
+.experience__aside .btn { align-self: flex-start; }
+/* All jobs share one big tile (cols 5–12); hairlines only between jobs, inside the tile.
+   Jobs keep the page columns via subgrid: head on the first 4, body on the last 4. */
+.jobs { grid-column: 5 / -1; display: grid; grid-template-columns: subgrid; list-style: none; margin: 0; padding: 0 clamp(20px, 2.4vw, 40px); }
+.job { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; row-gap: 12px; padding: clamp(28px, 2.8vw, 44px) 0; }
+.job + .job { border-top: 1px solid var(--line); }
+.job__head { grid-column: 1 / span 4; display: flex; flex-direction: column; gap: 8px; }
+.job__body { grid-column: 5 / -1; display: flex; flex-direction: column; gap: 12px; }
+/* Period and role share one line, split by a middle dot; it wraps whole pieces on narrow screens. */
+.job__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-variant-numeric: tabular-nums; }
+.job__dates { display: inline-flex; align-items: center; gap: 8px; }
+.job__now { padding: 2px 8px; border-radius: 999px; background: var(--accent); color: var(--on-accent); }
+.job__summary, .job__details { text-wrap: pretty; }
+
+/* ---------------- About ---------------- */
+
+/* Full-width orange tile with rounded corners; content stays in the centred page column. Its bottom corners
+   round off over the black Contacts, which tucks underneath (see .about + .contacts). Inner padding is tile-sized,
+   not section-sized. Text on it is ink — muted grey fails contrast on orange. */
+.about {
+  position: relative; z-index: 1;
+  margin-top: var(--section);
+  padding: clamp(48px, 5vw, 88px) 0;
+  background: var(--accent); color: var(--on-accent);
+  border-radius: var(--radius-band);
+}
+.about__intro { align-items: start; padding-bottom: clamp(28px, 3vw, 48px); }
+.about__intro h2 { grid-column: 1 / span 8; }
+.about__intro p { grid-column: 9 / span 4; }
+/* Gallery on the page grid: large photo cols 1–6 spans two rows; small photos 3 cols each.
+   The large tile sets the height (3:4), the small ones stretch to half of it — also ≈3:4. */
+.gallery { row-gap: var(--col-gap); }
+.gallery > div { min-height: 0; }
+.g-autumn { grid-column: 1 / span 6; grid-row: 1 / span 2; aspect-ratio: 3 / 4; }
+.g-river { grid-column: 7 / span 3; grid-row: 1; }
+.g-horses { grid-column: 10 / span 3; grid-row: 1; }
+.g-pool { grid-column: 7 / span 3; grid-row: 2; }
+.g-cat { grid-column: 10 / span 3; grid-row: 2; }
+/* Cat photo + caption share one tile, the same size as the other small photos. A big tilted heart
+   sits in the corner and runs off the tile's edge, cropped by it. */
+.pet { position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 12px; padding: var(--tile-pad); }
+.pet__photo { flex: 1 1 auto; min-height: 0; border-radius: var(--radius-in); }
+.pet__caption { position: relative; z-index: 1; padding: 0 34% 4px 4px; text-wrap: pretty; }
+.pet__heart { position: absolute; right: -11%; bottom: -10%; width: 46%; max-width: 180px; height: auto; color: var(--accent); transform: rotate(-20deg); pointer-events: none; }
+.b-fill { width: 100%; height: 100%; transition: transform 600ms var(--ease); }
+.b-fill:hover { transform: scale(0.985); }
+
+/* ---------------- Contacts ---------------- */
+
+.contacts { margin-top: var(--section); background: var(--night); color: var(--on-night); padding: var(--section) 0 32px; }
+.contacts__title { padding-bottom: clamp(40px, 5vw, 80px); }
+.contacts__title span { color: var(--accent); }
+.contacts .t-label { color: var(--on-night-2); }
+/* Two tiles per row, each spanning 6 page columns. */
+.channels { row-gap: var(--col-gap); }
+.v4 .channel {
+  grid-column: span 6;
+  position: relative;
+  display: flex; flex-direction: column; justify-content: space-between; gap: 40px;
+  min-height: clamp(160px, 14vw, 240px);
+  padding: clamp(20px, 2.2vw, 36px) clamp(20px, 2.2vw, 32px);
+  border-radius: var(--radius);
+  overflow: hidden;   /* rounds the rising fill */
+  isolation: isolate;
+  transition: color 240ms var(--ease);
+}
+/* The divider is the top edge of a rounded tile: a hairline that turns down at both corners
+   and fades out a little way down the sides (there are no side lines). */
+.channel::after {
+  content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  border: 1px solid var(--night-line); border-radius: inherit;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 var(--radius), transparent calc(var(--radius) * 2.5));
+  mask-image: linear-gradient(to bottom, #000 0, #000 var(--radius), transparent calc(var(--radius) * 2.5));
+  transition: opacity 240ms var(--ease);
+}
+/* On hover the orange fill slides down from the top edge (where the divider is); the tile's overflow clip gives it the rounded corners.
+   transform (not clip-path or scaleY) with a pre-built layer: clip-path animations on pseudo-elements got their
+   layer created lazily, so the first hover — and the first after visiting another tile — skipped its frames. */
+.channel::before {
+  content: ''; position: absolute; inset: 0; z-index: 0;
+  background: var(--accent);
+  transform: translateY(-101%);
+  will-change: transform;
+  transition: transform 560ms cubic-bezier(0.5, 0, 0.2, 1);   /* even ease-in-out, so the rise is visible */
+}
+.channel:hover::after, .channel:focus-visible::after { opacity: 0; }
+/* Text turns dark only once the descending fill is under it, otherwise it goes dark-on-dark for a moment:
+   the top row (label, action, icon) almost at once, the value at the bottom once the fill reaches it.
+   Delays apply on the way in only; on the way out colours return immediately. */
+.channel .t-label, .channel__value { transition: color 260ms var(--ease); }
+.v4 .channel:hover, .v4 .channel:focus-visible,
+.channel:hover .t-label, .channel:focus-visible .t-label,
+.channel:hover .channel__icon, .channel:focus-visible .channel__icon { transition-delay: 60ms; }
+.v4 .channel:hover .channel__value, .v4 .channel:focus-visible .channel__value { color: var(--on-accent); transition-delay: 300ms; }
+.channel > * { position: relative; z-index: 1; }
+.channel__top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.channel__cta { display: inline-flex; align-items: center; gap: 12px; }
+.channel__action {
+  opacity: 0; transform: translateX(8px);
+  transition: opacity 220ms var(--ease), transform 300ms var(--ease);
+}
+.channel__icon { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--night-line); transition: transform 300ms var(--ease), border-color 240ms var(--ease); }
+.channel__value { overflow-wrap: anywhere; }
+.v4 .channel:hover, .v4 .channel:focus-visible { color: var(--on-accent); }
+.channel:hover::before, .channel:focus-visible::before { transform: translateY(0); }
+.channel:hover .t-label, .channel:focus-visible .t-label { color: var(--ink); }
+.channel:hover .channel__action, .channel:focus-visible .channel__action, .channel__action.is-visible { opacity: 1; transform: none; }
+.channel:hover .channel__icon { border-color: var(--ink); }
+.channel.is-link:hover .channel__icon { transform: rotate(45deg); }
+.channel.is-download:hover .channel__icon { transform: translateY(3px); }
+/* Touch screens have no hover — show the action text all the time. */
+@media (hover: none) { .channel__action { opacity: 1; transform: none; } }
+
+.footer { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; padding-top: 32px; color: var(--on-night-2); }
+.footer a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--on-night); }
+.footer a:hover { color: var(--accent); }
+
+/* ---------------- Responsive ---------------- */
+
+@media (max-width: 1024px) {
+  .nav { display: none; }
+  .menu-btn { display: inline-grid; }
+  .hero__text { grid-column: 1 / -1; }
+  .hero__portrait { grid-column: 1 / span 6; }
+  .stack__item { position: static; }
+  .stack__panel { row-gap: 0; box-shadow: none; }
+  .stack__text { padding: 20px 8px 8px; }
+  .stack__frame, .stack__text { grid-column: 1 / -1; }
+  .stack__frame { max-height: none; }
+  .experience__aside { grid-column: 1 / -1; position: static; margin-bottom: 32px; padding-right: 0; }
+  .jobs { grid-column: 1 / -1; }
+  .job__head { grid-column: 1 / span 5; }
+  .job__body { grid-column: 6 / -1; }
+  .about__intro h2, .about__intro p { grid-column: 1 / -1; }
+  .about__intro p { margin-top: 16px; }
+}
+
+@media (max-width: 640px) {
+  .topbar__actions .btn span { display: none; }
+  .topbar__actions .btn { width: 44px; padding: 0; }
+  .hero__portrait { grid-column: 1 / -1; aspect-ratio: 1 / 1; }
+  .v4 .latest { grid-template-columns: minmax(0, 1fr) auto; }
+  .latest__thumb { display: none; }
+  .job__head, .job__body { grid-column: 1 / -1; }
+  .g-autumn { grid-column: 1 / -1; grid-row: auto; }
+  .g-river, .g-horses { grid-column: span 6; grid-row: auto; aspect-ratio: 3 / 4; }
+  /* Pool and the cat tile go full width: a caption inside a half-width tile wraps into a tall column. */
+  .g-pool { grid-column: 1 / -1; grid-row: auto; aspect-ratio: 4 / 3; }
+  .g-cat { grid-column: 1 / -1; grid-row: auto; }
+  .pet__photo { flex: none; aspect-ratio: 4 / 3; background-position: center 70%; }
+  .pet__caption { padding-right: 40%; }
+  .pet__heart { width: 34%; right: -6%; bottom: -14%; }
+  .v4 .channel { grid-column: 1 / -1; min-height: 0; gap: 24px; }
+}

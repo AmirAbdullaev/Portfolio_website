@@ -2,6 +2,7 @@ import { CSSProperties, useRef } from 'react'
 import { CV_URL } from '../constants'
 import { ABOUT, EXPERIENCE, LATEST_PROJECT, PORTRAIT, PROJECTS, Photo } from '../content'
 import { ArrowE, ArrowNE, Contacts, Download, GridOverlay, Media, TopBar, reveal, stroke, useHashScroll, useReveal, useStickyFit } from './shared'
+import { ArtBoard, ArtDashboard } from './HeroIllustrations'
 import './v4.css'
 
 /** The "Latest project" banner is parked until there's a clear use for it. */
@@ -22,17 +23,27 @@ function LatestProject() {
 
 function Hero() {
   return (
-    <section id="top" className="hero wrap" aria-labelledby="hero-title">
-      <div className="grid hero__body">
-        <div className="hero__text">
-          <p className="t-lead muted" {...reveal(60)}>Hi, I’m Amir —</p>
-          <h1 id="hero-title" className="t-l" {...reveal(120)}>
-            4 years of&nbsp;hands-on experience crafting <span className="mark">mobile apps</span> &amp;{' '}
-            <span className="mark">B2B SaaS</span> products that drive real results
-          </h1>
-        </div>
-        <Media className="hero__portrait" image={PORTRAIT} position="50% 15%" label="Amir Abdullaev holding a glass at a summer terrace" />
+    // A black full-width band, a little shorter than the screen so the next block peeks in.
+    // Title + subtitle like the reference, the portrait set into the title like a word,
+    // one button, and two bento clusters of UI tiles cut off by the bottom edge.
+    <section id="top" className="hero" aria-labelledby="hero-title">
+      <div className="hero__content wrap">
+        <h1 id="hero-title" className="hero__title t-xl" {...reveal(60)}>
+          Hi, I’m Amir{' '}
+          <span className="hero__photo" role="img" aria-label="Amir Abdullaev" style={{ backgroundImage: `url('${PORTRAIT}')` }} />
+          {' '}— product designer
+        </h1>
+        <p className="hero__sub t-lead" {...reveal(140)}>
+          4 years of&nbsp;<span className="nowrap">hands-on</span> experience crafting <span className="mark">mobile apps</span> &amp;{' '}
+          <span className="mark">B2B SaaS</span> products that drive real results
+        </p>
+        <a className="btn btn-paper t-small w-500" href="#projects" {...reveal(220)}>
+          <span>All projects</span>
+          <ArrowE />
+        </a>
       </div>
+      <ArtDashboard />
+      <ArtBoard />
       {SHOW_LATEST && <LatestProject />}
     </section>
   )
@@ -47,7 +58,7 @@ function Projects() {
     <section id="projects" className="projects wrap" aria-labelledby="projects-title">
       <div className="section-head" {...reveal()}>
         <h2 id="projects-title" className="t-l">Projects</h2>
-        <a className="btn btn-line t-small w-500" href="#projects">
+        <a className="btn btn-line t-small w-500" href="/?page=projects">
           <span>Show all</span>
           <ArrowE />
         </a>

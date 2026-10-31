@@ -8,11 +8,16 @@ const V4 = lazy(() => import('./v4/Portfolio'))
 const ProjectWms = lazy(() => import('./v4/ProjectWms'))
 const ProjectVlife = lazy(() => import('./v4/ProjectVlife'))
 const ProjectQazaq = lazy(() => import('./v4/ProjectQazaq'))
-const CASES: Record<string, typeof ProjectWms> = { wms: ProjectWms, vlife: ProjectVlife, qazaq: ProjectQazaq }
+const ProjectArnur = lazy(() => import('./v4/ProjectArnur'))
+const ProjectQsight = lazy(() => import('./v4/ProjectQsight'))
+const CASES: Record<string, typeof ProjectWms> = { wms: ProjectWms, vlife: ProjectVlife, qazaq: ProjectQazaq, qsight: ProjectQsight, arnur: ProjectArnur }
+// Other pages of the same site, by ?page=.
+const AllProjects = lazy(() => import('./v4/AllProjects'))
+const PAGES: Record<string, typeof ProjectWms> = { projects: AllProjects }
 
 export default function App() {
   const params = new URLSearchParams(window.location.search)
-  const Page = CASES[params.get('project') ?? ''] ?? (params.get('v') === '3' ? V3 : V4)
+  const Page = CASES[params.get('project') ?? ''] ?? PAGES[params.get('page') ?? ''] ?? (params.get('v') === '3' ? V3 : V4)
   return (
     <Suspense fallback={null}>
       <Page />

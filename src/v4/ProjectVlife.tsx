@@ -1,5 +1,5 @@
 import { ArrowNE, Contacts, GridOverlay, TopBar, reveal, useHashScroll, useReveal } from './shared'
-import { ArtDef, Cards, CaseHero, Chapter, Facts, Figure, HOME, OtherProjects, StackTile, Text } from './case'
+import { ArtDef, Cards, CaseHero, Chapter, Facts, Figure, FigureRow, Figures, HOME, OtherProjects, StackTile, Text } from './case'
 import './v4.css'
 import './case.css'
 
@@ -150,15 +150,15 @@ const DONE: { title: string; text: string; art: Art }[] = [
   { title: 'Research on the forecourt', art: 'talk', text: 'Many user interviews shaped the home screen and the rest of the app. We also surveyed drivers at filling and charging stations and went through the flows ourselves with different cars.' },
 ]
 
-const RESULTS = [
-  { value: '−45%', text: 'Crash rate' },
-  { value: '95%', text: 'Crash-free users, up from 82%' },
-  { value: '+12%', text: 'Conversion, from a simpler path through the app — registration above all' },
-  { value: '+15%', text: 'PMAU, as people engaged with more of the app' },
-  { value: '+10%', text: 'MAU, driven by updated features and new integrations' },
-  { value: '+12%', text: 'SMS and push deliverability, after moving to a more efficient system' },
-  { value: '4.9', text: 'Google Play rating, up from 4.1' },
-  { value: '3.9', text: 'App Store rating, up from 3.2' },
+const RESULTS: FigureRow[] = [
+  { value: '−45%', label: 'Crash rate' },
+  { value: '95%', label: 'Crash-free users', note: 'Up from 82%' },
+  { value: '+12%', label: 'Conversion', note: 'A simpler path, registration above all' },
+  { value: '+15%', label: 'PMAU', note: 'As people engaged with more of the app' },
+  { value: '+10%', label: 'MAU', note: 'Driven by updated features and new integrations' },
+  { value: '+12%', label: 'SMS and push deliverability', note: 'After moving to a more efficient system' },
+  { value: '4.9', label: 'Google Play rating', note: 'Up from 4.1' },
+  { value: '3.9', label: 'App Store rating', note: 'Up from 3.2' },
 ]
 
 const ALSO = [
@@ -306,25 +306,21 @@ export default function ProjectVlife() {
           />
         </Chapter>
 
-        <Chapter title="Results" accent wide>
-          <ul className="cs-stats">
-            {RESULTS.map((r, i) => (
-              <li key={r.text} className="cs-stat tile" {...reveal((i % 4) * 80)}>
-                <span className="cs-stat__value t-xl">{r.value}</span>
-                <span className="t-body muted">{r.text}</span>
-              </li>
-            ))}
-          </ul>
-          <div className="cs-evidence">
-            <figure className="cs-evidence__shot tile" {...reveal()}>
-              <img src="/assets/vlife-crashlytics.webp" width={1228} height={636} loading="lazy" alt="Crash-free users rising from 85% to 95.07% over a week in April 2025; crash-free sessions at 90.38%; crashes down 45.3%" />
-            </figure>
-            <div className="cs-reports tile" {...reveal(80)}>
-              <p className="t-lead">Also:</p>
-              <ul className="cs-dots t-body">
-                {ALSO.map((r) => <li key={r}>{r}</li>)}
-              </ul>
-            </div>
+        <Chapter title="Results" intro="What changed after the redesign, by the numbers.">
+          <Figures items={RESULTS} />
+          <Figure
+            pad
+            src="/assets/vlife-crashlytics.webp"
+            width={1228}
+            height={636}
+            alt="Crash-free users rising from 85% to 95.07% over a week in April 2025; crash-free sessions at 90.38%; crashes down 45.3%"
+            caption="Crashlytics, April 2025: crash-free users up to 95%, crashes down 45%"
+          />
+          <div className="cs-reports tile" {...reveal()}>
+            <p className="t-lead">Also:</p>
+            <ul className="cs-dots t-body">
+              {ALSO.map((r) => <li key={r}>{r}</li>)}
+            </ul>
           </div>
         </Chapter>
 

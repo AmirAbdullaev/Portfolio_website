@@ -193,11 +193,74 @@ body {
 
 /* ---------------- Hero ---------------- */
 
-.hero { padding-top: clamp(40px, 6vw, 96px); }
-.hero__body { align-items: end; row-gap: 32px; }
-.hero__text { grid-column: 1 / span 8; display: flex; flex-direction: column; gap: clamp(16px, 1.6vw, 24px); }
-.mark { color: var(--accent-ink); white-space: nowrap; }
-.hero__portrait { grid-column: 9 / span 4; aspect-ratio: 4 / 5; }
+/* A black full-width band with square edges, a little shorter than the screen so the next block peeks in.
+   Title + subtitle, one button, and two bento clusters of UI tiles cut off by the bottom edge. */
+.hero {
+  --art-fs: clamp(6px, 0.82vw, 13px);          /* every art tile is sized in em of this */
+  --art-visible: 15.5em;                       /* part of a cluster above the bottom edge */
+  position: relative; overflow: hidden; isolation: isolate;
+  min-height: calc(100svh - var(--bar) - clamp(56px, 10vh, 120px));
+  padding: clamp(56px, 7vw, 112px) 0 calc(var(--art-fs) * 15.5 + clamp(32px, 4vw, 64px));
+  background: var(--night); color: var(--on-night);
+}
+.hero__content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: clamp(20px, 2vw, 32px); text-align: center; }
+.hero__title { max-width: 14ch; text-wrap: balance; }
+.hero__sub { max-width: 36ch; color: var(--on-night-2); text-wrap: balance; }
+.nowrap { white-space: nowrap; }
+.mark { color: var(--accent); white-space: nowrap; }   /* accent on black: 6:1 */
+.hero__photo {
+  display: inline-block; width: 1.6em; height: 0.74em; vertical-align: -0.04em;
+  border-radius: 999px; background-size: cover; background-position: 50% 18%;
+}
+
+/* ---- bento art: tiles in the site's surfaces and radius, sized in em ---- */
+.art { position: absolute; z-index: 0; bottom: calc(var(--art-fs) * (15.5 - 19.8)); font-size: var(--art-fs); display: grid; gap: 0.9em; grid-template-rows: 9em 10em; }
+.art.is-left { left: var(--gutter); grid-template-columns: 22em 13em; }
+.art.is-right { right: var(--gutter); grid-template-columns: 13em 22em; }
+.art-tile { border-radius: 1.8em; padding: 1.3em; display: flex; flex-direction: column; gap: 0.8em; min-height: 0; overflow: hidden; }
+.art-tile.is-paper { background: var(--tile); }
+.art-tile.is-accent { background: var(--accent); }
+.art-tile.is-dark { background: var(--night-2); border: 1px solid var(--night-line); }
+
+.art-line { display: block; height: 0.6em; border-radius: 999px; background: rgba(18, 18, 18, 0.16); flex: none; }
+.art-line.is-bold { height: 1em; background: var(--ink); }
+.art-line.is-ink { background: rgba(18, 18, 18, 0.55); }
+.art-line.is-light { background: rgba(242, 240, 235, 0.22); }
+.is-w30 { width: 30%; } .is-w40 { width: 40%; } .is-w45 { width: 45%; } .is-w50 { width: 50%; } .is-w60 { width: 60%; } .is-w70 { width: 70%; }
+.art-row { display: flex; align-items: center; gap: 0.8em; }
+.art-dot { width: 1.6em; height: 1.6em; border-radius: 50%; background: var(--ink); flex: none; }
+.art-pill { margin-left: auto; width: 4em; height: 1.6em; border-radius: 999px; background: var(--accent); }
+
+.art-dash { grid-row: 1 / span 2; }
+.art-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8em; }
+.art-kpi { display: flex; flex-direction: column; gap: 0.6em; padding: 0.9em; border-radius: 1em; background: var(--paper-2); }
+.art-bars { flex: 1; display: flex; align-items: flex-end; gap: 0.7em; padding-top: 0.4em; border-bottom: 2px solid rgba(18, 18, 18, 0.16); }
+.art-bar { flex: 1; border-radius: 0.5em 0.5em 0 0; background: rgba(18, 18, 18, 0.18); }
+.art-bar.is-accent { background: var(--accent); }
+
+.art-toggle { justify-content: flex-end; }
+.art-switch { width: 4.4em; height: 2.4em; border-radius: 999px; background: var(--ink); padding: 0.3em; display: flex; justify-content: flex-end; margin-bottom: auto; }
+.art-switch span { width: 1.8em; height: 1.8em; border-radius: 50%; background: var(--paper); }
+
+.art-chart svg { flex: 1; width: 100%; min-height: 0; }
+
+.art-scan { align-items: center; justify-content: center; position: relative; }
+.art-barcode { width: 70%; height: 4.2em; background: repeating-linear-gradient(90deg, var(--paper) 0 0.35em, transparent 0.35em 0.6em, var(--paper) 0.6em 0.75em, transparent 0.75em 1.1em); border-radius: 0.3em; }
+.art-done { position: absolute; right: 1em; top: 1em; width: 2.4em; height: 2.4em; border-radius: 50%; background: var(--accent); color: var(--ink); display: grid; place-items: center; }
+.art-done svg { width: 1.4em; height: 1.4em; }
+.art-chips { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 0.6em; }
+.art-chip { padding: 0.6em 1.1em; border-radius: 999px; border: 1px solid var(--night-line); color: var(--on-night-2); font-size: 1.15em; font-weight: 500; letter-spacing: 0.06em; line-height: 1; }
+.art-chip.is-accent { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+.art-kanban { grid-row: 1 / span 2; grid-column: 2; flex-direction: row; gap: 0.8em; }
+.art-col { flex: 1; display: flex; flex-direction: column; gap: 0.7em; padding-top: 0.2em; }
+.art-card { display: flex; flex-direction: column; gap: 0.5em; padding: 0.8em; border-radius: 0.9em; background: var(--paper-2); }
+.art-card.is-accent { background: var(--accent); }
+.art-card.is-accent .art-line { background: rgba(18, 18, 18, 0.35); }
+
+/* Primary button inverted for dark surfaces: same shape and size, light fill. */
+.v4 .btn-paper { background: var(--paper); color: var(--ink); }
+.v4 .btn-paper:hover { background: var(--accent); color: var(--on-accent); }
 
 /* Latest-project banner — kept for later, not rendered right now (see SHOW_LATEST). */
 .v4 .latest {
@@ -245,7 +308,7 @@ body {
 /* Optical alignment: big glyphs carry side bearing, so the ink starts right of the grid line.
    Values are each first letter's measured left bearing in Onest. */
 .t-l, .t-xl { text-indent: -0.075em; }          /* E, P, A … */
-#hero-title { text-indent: -0.03em; }           /* 4 */
+#hero-title { text-indent: 0; }                 /* centred: no optical pull */
 /* Straight after the orange About tile there is no gap: Contacts slides up under its rounded bottom corners so they
    sit on black, not on the paper background. Elsewhere (case study) the normal gap stays. */
 .about + .contacts { margin-top: calc(-1 * var(--radius-band)); padding-top: calc(var(--section) + var(--radius-band)); }
@@ -378,8 +441,7 @@ body {
 @media (max-width: 1024px) {
   .nav { display: none; }
   .menu-btn { display: inline-grid; }
-  .hero__text { grid-column: 1 / -1; }
-  .hero__portrait { grid-column: 1 / span 6; }
+  .hero { --art-fs: 1.05vw; }
   .stack__item { position: static; }
   .stack__panel { row-gap: 0; box-shadow: none; }
   .stack__text { padding: 20px 8px 8px; }
@@ -396,7 +458,10 @@ body {
 @media (max-width: 640px) {
   .topbar__actions .btn span { display: none; }
   .topbar__actions .btn { width: 44px; padding: 0; }
-  .hero__portrait { grid-column: 1 / -1; aspect-ratio: 1 / 1; }
+  /* Phones: one cluster, centred, so tiles stay big enough to read as UI. */
+  .hero { --art-fs: 1.9vw; min-height: 0; }
+  .art.is-left { left: 50%; transform: translateX(-50%); }
+  .art.is-right { display: none; }
   .v4 .latest { grid-template-columns: minmax(0, 1fr) auto; }
   .latest__thumb { display: none; }
   .job__head, .job__body { grid-column: 1 / -1; }

@@ -1,6 +1,6 @@
 import { CSSProperties, Fragment, ReactNode, useEffect, useRef } from 'react'
 import { ArrowE, Contacts, GridOverlay, Media, TopBar, reveal, useHashScroll, useReveal, useStickyFit } from './shared'
-import { ArtDef, Cards, CaseHero, Chapter, Facts, HOME, OtherProjects, Photo, StackTile, Text } from './case'
+import { ArtDef, Cards, CaseHero, Chapter, Facts, FigureRow, Figures, HOME, OtherProjects, Photo, StackTile, Text } from './case'
 import './v4.css'
 import './case.css'
 
@@ -86,11 +86,11 @@ const DECISIONS: { title: string; text: string[]; screens?: Screen[]; split?: bo
   },
 ]
 
-const RESULTS = [
-  { value: '8', text: 'Warehouse flows moved into one system, from container unloading to shipping' },
-  { value: '5', text: 'Roles working in the same data, from receiving storekeeper to plant management' },
-  { value: '4', text: 'Months from the first walk-through of the warehouse to the pilot on the floor' },
-  { value: 'Pilot', text: 'Running on part of the warehouse today; rollout to the rest is in progress' },
+const RESULTS: FigureRow[] = [
+  { value: '13', label: 'Warehouse flows in one system', note: 'From container unloading to shipping' },
+  { value: '13', label: 'Roles working in the same data', note: 'From the receiving storekeeper to plant management' },
+  { value: '4', label: 'Months to the pilot', note: 'From the first walk-through to the floor' },
+  { value: 'Pilot', label: 'On part of the warehouse', note: 'Rollout to the rest is in progress' },
 ]
 
 /** The backbone flow that went live first, in order. */
@@ -381,15 +381,8 @@ export default function ProjectWms() {
           <Text>We ran it, fixed it, and only then added the rest. The old system stayed available the whole time so nothing on the plant could come to a stop.</Text>
         </Chapter>
 
-        <Chapter title="Results" accent wide>
-          <ul className="cs-stats">
-            {RESULTS.map((r, i) => (
-              <li key={r.value} className={`cs-stat tile${i === RESULTS.length - 1 ? ' is-note' : ''}`} {...reveal(i * 80)}>
-                <span className="cs-stat__value t-xl">{r.value}</span>
-                <span className="t-body muted">{r.text}</span>
-              </li>
-            ))}
-          </ul>
+        <Chapter title="Results" intro="The backbone flow runs on part of the warehouse; the rest follows in stages.">
+          <Figures items={RESULTS} />
           <div className="cs-reports tile" {...reveal()}>
             <p className="t-lead">Exact figures are still being collected, so here is what the warehouse reports:</p>
             <ul className="cs-dots t-body">

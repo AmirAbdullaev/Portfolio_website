@@ -1,0 +1,48 @@
+/* All projects page. Built only from v4.css tokens and type styles, on the homepage's 12-column grid. */
+
+.v4 .pgrid { list-style: none; margin: 0; padding: 0; }
+
+/* Head: the title on cols 1–8, a short intro on cols 9–12, both resting on the same bottom line. */
+.pg-head { padding-top: clamp(48px, 7vw, 120px); }
+.pg-head__inner { align-items: end; row-gap: 20px; }
+.pg-head h1 { grid-column: 1 / span 8; text-indent: -0.04em; }
+.pg-head__intro { grid-column: 9 / -1; text-wrap: pretty; }
+.pg-dot { color: var(--accent); }
+
+.pg-section { padding-top: clamp(64px, 7vw, 128px); }
+/* No rule under the heading, like the homepage Projects head. */
+.pg-section .section-head { border-bottom: 0; }
+
+/* Cards: work two to a row (6 columns), concepts three to a row (4 columns). Cards in a row share its height and
+   keep their button on the bottom edge. */
+.pgrid { row-gap: var(--col-gap); }
+.pgrid__item { display: flex; }
+.pgrid__item.is-work { grid-column: span 6; }
+.pgrid__item.is-concept { grid-column: span 4; }
+
+.pcard {
+  flex: 1;
+  display: flex; flex-direction: column; gap: clamp(16px, 1.6vw, 24px);
+  padding: var(--tile-pad);
+}
+.pcard__frame { display: block; overflow: hidden; border-radius: var(--radius-in); aspect-ratio: 16 / 10; }
+.pcard__image { width: 100%; height: 100%; border-radius: 0; transition: transform 900ms var(--ease); }
+.pcard__text { display: flex; flex-direction: column; gap: 8px; padding: 0 8px; }
+.pcard__text .t-m { text-wrap: balance; }
+.pcard__text .t-body { text-wrap: pretty; }
+.pcard__cta { margin: auto 8px 8px; align-self: flex-start; }
+
+/* Linked cards zoom their picture and fill their button on hover, like the homepage project stack. */
+a.pcard:hover .pcard__image, a.pcard:focus-visible .pcard__image { transform: scale(1.03); }
+.v4 a.pcard:hover .btn-line, .v4 a.pcard:focus-visible .btn-line { border-color: var(--ink); background: var(--ink); color: var(--paper); }
+a.pcard:hover .i-ne { transform: translate(2px, -2px); }
+
+@media (max-width: 1024px) {
+  .pg-head h1, .pg-head__intro { grid-column: 1 / -1; }
+  .pg-head__intro { max-width: 52ch; }
+  .pgrid__item.is-concept { grid-column: span 6; }
+}
+
+@media (max-width: 640px) {
+  .pgrid__item.is-work, .pgrid__item.is-concept { grid-column: 1 / -1; }
+}

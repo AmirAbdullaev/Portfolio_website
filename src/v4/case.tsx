@@ -1,6 +1,6 @@
 // Building blocks shared by the project case studies (the WMS, Vlife and Qazaq Energy Charge pages).
 import { ReactNode } from 'react'
-import { PROJECTS } from '../content'
+import { MORE_PROJECTS, PROJECTS } from '../content'
 import { ArrowE, ArrowNE, Media, reveal } from './shared'
 
 export const HOME = '/'
@@ -12,8 +12,9 @@ const slug = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-').re
  * Optical alignment for large headings, as on the homepage: v4.css pulls them left by 0.075em (the bearing of E, P, R…).
  * Letters with a smaller left bearing in Onest get their own measured value so the ink still starts on the grid line.
  * P is listed so hero lines starting with it get the heading value instead of the hero's per-line default.
+ * Q, S, I, i and p are the left side bearings measured in Onest Medium (xMin / unitsPerEm).
  */
-const BEARING: Record<string, number> = { W: 0, V: 0, A: 0, T: 0.01, C: 0.04, Q: 0.04, P: 0.075 }
+const BEARING: Record<string, number> = { W: 0, V: 0, A: 0, T: 0.01, C: 0.04, Q: 0.044, P: 0.075, S: 0.053, I: 0.083, i: 0.047, p: 0.063 }
 export const align = (text: string) => {
   const b = BEARING[text[0]]
   return b === undefined ? undefined : { textIndent: `-${b}em` }
@@ -127,6 +128,29 @@ export function Figure({ src, alt, caption, tag, width, height, fit, pad, classN
   )
 }
 
+/** A result: the figure, what it counts, and an optional note under that in small type. */
+export type FigureRow = { value: string; label: string; note?: string }
+
+/**
+ * Results as one tile outlined in the accent, a row per figure: the number on the left, its label (and note) on the
+ * right, thin lines between the rows.
+ */
+export function Figures({ items }: { items: FigureRow[] }) {
+  return (
+    <ul className="cs-figures tile" {...reveal()}>
+      {items.map((f) => (
+        <li key={f.label} className="cs-figures__row">
+          <span className="cs-figures__value t-l">{f.value}</span>
+          <span className="cs-figures__label">
+            <span className="t-lead">{f.label}</span>
+            {f.note && <span className="t-small muted">{f.note}</span>}
+          </span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 /** Key facts as tiles: label at the top, value at the bottom, like the homepage contact tiles. */
 export function Facts({ items }: { items: { label: string; value: ReactNode }[] }) {
   return (
@@ -160,13 +184,13 @@ export function OtherProjects({ current }: { current: string }) {
     <section className="cs-others wrap" aria-labelledby="others-title">
       <div className="section-head" {...reveal()}>
         <h2 id="others-title" className="t-l">Other projects</h2>
-        <a className="btn btn-line t-small w-500" href={`${HOME}#projects`}>
+        <a className="btn btn-line t-small w-500" href="/?page=projects">
           <span>All projects</span>
           <ArrowE />
         </a>
       </div>
       <ul className="cs-others__list">
-        {PROJECTS.filter((p) => p.title !== current).map((p, i) => (
+        {[...PROJECTS, ...MORE_PROJECTS].filter((p) => p.href?.startsWith('/') && p.title !== current).map((p, i) => (
           <li key={p.title} {...reveal(i * 80)}>
             <a className="latest" href={p.href ?? `${HOME}#projects`}>
               <Media className="latest__thumb" image={p.image} />

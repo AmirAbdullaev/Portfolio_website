@@ -20,7 +20,7 @@
 .cs-cover__frame { grid-column: 4 / -1; grid-row: 2; padding: var(--tile-pad); border-radius: var(--radius); background: var(--tile); }
 .cs-cover__grid > .cs-facts { grid-column: 1 / span 3; grid-row: 1 / span 2; }
 .cs-cover .cs-facts__row { grid-template-columns: minmax(0, 1fr); align-content: start; gap: 2px; }
-.cs-cover__media { width: 100%; aspect-ratio: 2 / 1; border-radius: var(--radius-in); }
+.cs-cover__media { width: 100%; aspect-ratio: 16 / 10; border-radius: var(--radius-in); }
 @container page (max-width: 640px) {
   .cs-cover__grid > * { grid-column: 1 / -1; grid-row: auto; }
   .cs-cover__grid > .cs-facts { grid-column: 1 / -1; grid-row: auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px var(--col-gap); }

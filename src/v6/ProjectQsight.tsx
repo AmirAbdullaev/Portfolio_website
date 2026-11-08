@@ -78,8 +78,8 @@ export default function ProjectQsight() {
     <CasePage>
       <CaseHero
         lines={['Q-sight', 'Inspection', 'platform']}
-        image="/assets/qsight-hero.webp"
-        position="center 20%"
+        image="/assets/project-qsight.webp"
+        position="center top"
         label="A phone with the Q-sight profile screen standing on a tiled cube against a blue wall"
         facts={[
           { label: 'Role', value: 'UX/UI designer' },

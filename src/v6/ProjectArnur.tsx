@@ -1,64 +1,13 @@
-
-import { ArtDef, Cards, CaseHero, Chapter, Figure, StackTile, Text, CasePage } from './case'
+import { CaseHero, Chapter, Figure, StackTile, Text, CasePage } from './case'
 import './case.css'
 
 // Case study: Arnur Credit, a microfinance app I worked on as a junior designer. Content from the Behance project
 // "Arnur Credit | Mobile Financial App", laid out with the same blocks as the other case studies.
 
-
-/**
- * Outline drawings for the persona tiles, in the style of the other case studies.
- *   sprout — a seedling: the farmer      shop — a storefront with an awning: the shop owner
- *   pram   — a baby pram: the young mum
- */
-type Art = 'sprout' | 'shop' | 'pram'
-const ART: Record<Art, ArtDef> = {
-  sprout: {
-    viewBox: '0 0 24 24',
-    body: (
-      <>
-        <path d="M12 21V10" />
-        <path d="M12 13c0-4-3-6.5-8-6.5 0 4.5 3 6.5 8 6.5z" />
-        <path d="M12 10c0-3.5 2.5-6 7-6 0 4-2.5 6-7 6z" />
-        <path d="M6 21h12" />
-      </>
-    ),
-  },
-  shop: {
-    viewBox: '0 0 24 24',
-    body: (
-      <>
-        <path d="M3 9.5 4.5 4h15L21 9.5" />
-        <path d="M3 9.5a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0" />
-        <path d="M4.5 12v8.5h15V12" />
-        <path d="M10 20.5v-5h4v5" />
-      </>
-    ),
-  },
-  pram: {
-    viewBox: '0 0 24 24',
-    body: (
-      <>
-        <path d="M5 10h15a7.5 7.5 0 0 1-15 0z" />
-        <path d="M12.5 10V2.5a7.5 7.5 0 0 1 7.5 7.5" />
-        <path d="M5 10 3.5 6H2" />
-        <circle cx="8.5" cy="20.5" r="1.8" />
-        <circle cx="16.5" cy="20.5" r="1.8" />
-      </>
-    ),
-  },
-}
-
-const PERSONAS: { title: string; text: string; art: Art }[] = [
-  { title: 'Ruslan, 45 — farmer', art: 'sprout', text: 'Needs money for seeds and equipment every season. The bank is far away and the procedures are complicated, so he wants a microloan without travelling to an office.' },
-  { title: 'Alina, 35 — shop owner', art: 'shop', text: 'Runs a small shop in a village and often needs to restock. Banks ask for piles of documents and take long, so she wants a loan fast, with little paperwork.' },
-  { title: 'Nazym, 22 — young mum', art: 'pram', text: 'On maternity leave, she sometimes needs a small sum quickly. She has no time to visit a bank and wants clear terms and a low rate.' },
-]
-
 const JOBS = [
-  { title: 'Before the sowing season', text: 'When Ruslan urgently needs seeds and fertiliser, he wants a loan of up to 1,000,000 ₸ — to secure the harvest and grow the farm’s income.' },
-  { title: 'Before the holidays', text: 'When Alina has to restock before a festive season, she wants a microloan of up to 500,000 ₸ — to widen the range and bring in more customers.' },
-  { title: 'When the family needs it', text: 'When Nazym has to buy things for the children or pay for medical care, she wants to borrow up to 200,000 ₸ — so the family budget holds.' },
+  { title: 'Before the sowing season', text: 'When a farmer urgently needs seeds and fertiliser, he wants a loan of up to 1,000,000 ₸ — to secure the harvest and grow the farm’s income.' },
+  { title: 'Before the holidays', text: 'When a village shop owner has to restock before a festive season, she wants a microloan of up to 500,000 ₸ — to widen the range and bring in more customers.' },
+  { title: 'When the family needs it', text: 'When a young mum on maternity leave has to buy things for the children or pay for medical care, she wants to borrow up to 200,000 ₸ — so the family budget holds.' },
 ]
 
 /**
@@ -130,10 +79,6 @@ export default function ProjectArnur() {
         <p className="cs-lede t-lead">Arnur Credit is one of the largest microfinance organisations in Kazakhstan. It lends to small businesses and farmers in rural areas of the south. The app lets people apply for a loan, follow their repayments and pay without travelling to an office.</p>
         <Text>I joined this project as a junior designer. The research and the flows on this page are the part of the work I took part in.</Text>
       </CaseHero>
-
-      <Chapter title="Who it’s for" wide intro="Three people the team designed for: their goals, what gets in the way, and what would help.">
-        <Cards items={PERSONAS} art={ART} />
-      </Chapter>
 
       <Chapter title="Jobs to be done">
         <StackTile items={JOBS} />

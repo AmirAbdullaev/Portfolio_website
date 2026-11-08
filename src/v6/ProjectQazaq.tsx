@@ -188,7 +188,7 @@ export default function ProjectQazaq() {
       <CaseHero
         lines={['Qazaq', 'Energy', 'Charge']}
         image="/assets/project-qazaq-energy.webp"
-        position="center 30%"
+        position="center top"
         label="A Qazaq Energy Charge station with a CCS2 connector being plugged into a car"
         devices={['EV charging station']}
         facts={[

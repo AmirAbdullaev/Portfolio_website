@@ -1,57 +1,30 @@
-/* Project case studies. Built only from v4.css tokens and type styles, on the homepage's 12-column grid. */
+/* Project case studies in v5. The v4 case-study blocks, on the v5 tokens and the page column's 12-column grid;
+   breakpoints are container queries on the page column, so they follow its width rather than the window's. */
 
-.v4 dl, .v4 dd { margin: 0; }
-.v4 ol, .v4 ul { list-style: none; margin: 0; padding: 0; }
-
-.v4 {
+.v5 {
   --chapter: clamp(64px, 7vw, 128px);   /* space above and below each chapter */
   --block: clamp(28px, 2.6vw, 44px);    /* space between blocks inside a chapter */
 }
 
 /* ---------------- Hero ---------------- */
 
-/* Full-bleed photo under the text. The photo is desaturated and covered by an ink scrim that stays
-   light over the building and gets heavy at the bottom, where the title and facts sit. */
-.cs-hero {
-  position: relative; isolation: isolate; overflow: hidden;
-  min-height: calc(100svh - var(--bar));
-  display: flex;
-  color: var(--on-night);
-  background: var(--night);
+/* The tags and the name on top, then the cover photo across the content width. */
+.cs-cover { padding-top: clamp(40px, 6vw, 96px); }
+.cs-cover__head { display: flex; flex-direction: column; gap: 12px; margin-bottom: clamp(28px, 3vw, 48px); }
+.cs-cover__head h1 { max-width: 18ch; }
+/* Under the name, one block: the facts in a narrow column on the left (cols 1–3, as the chapter titles below), the
+   description and then a modest photo on the right (cols 4–12, as the chapter content). */
+.cs-cover__grid { row-gap: clamp(24px, 2.4vw, 36px); align-items: start; }
+.cs-cover__text { grid-column: 4 / -1; grid-row: 1; display: flex; flex-direction: column; gap: 16px; }
+.cs-cover__text > * { max-width: 60ch; text-wrap: pretty; }
+.cs-cover__frame { grid-column: 4 / -1; grid-row: 2; padding: var(--tile-pad); border-radius: var(--radius); background: var(--tile); }
+.cs-cover__grid > .cs-facts { grid-column: 1 / span 3; grid-row: 1 / span 2; }
+.cs-cover .cs-facts__row { grid-template-columns: minmax(0, 1fr); align-content: start; gap: 2px; }
+.cs-cover__media { width: 100%; aspect-ratio: 2 / 1; border-radius: var(--radius-in); }
+@container page (max-width: 640px) {
+  .cs-cover__grid > * { grid-column: 1 / -1; grid-row: auto; }
+  .cs-cover__grid > .cs-facts { grid-column: 1 / -1; grid-row: auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px var(--col-gap); }
 }
-.cs-hero__bg {
-  position: absolute; inset: 0; z-index: -1;
-  background-size: cover; background-repeat: no-repeat;   /* image and focal point come from the page (CaseHero) */
-  filter: saturate(0.65);
-  animation: cs-settle 1800ms var(--ease) both;
-}
-.cs-hero::after {
-  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background:
-    linear-gradient(180deg, rgba(18,18,18,0.40) 0%, rgba(18,18,18,0.18) 32%, rgba(18,18,18,0.50) 60%, rgba(18,18,18,0.90) 100%),
-    linear-gradient(90deg, rgba(18,18,18,0.35) 0%, rgba(18,18,18,0) 60%);
-}
-@keyframes cs-settle { from { transform: scale(1.06); } to { transform: none; } }
-
-.cs-hero__inner {
-  width: 100%;
-  display: flex; flex-direction: column; justify-content: flex-end;
-  padding-top: clamp(160px, 30vh, 400px);
-  padding-bottom: clamp(32px, 4vw, 64px);
-}
-
-/* The title sits on a subgrid of the page grid, so each line can start on its own column. */
-.cs-hero__title {
-  grid-column: 1 / -1;
-  display: grid; grid-template-columns: subgrid;
-  text-indent: 0;
-}
-.cs-hero__line { grid-column: 1 / -1; white-space: nowrap; text-indent: -0.005em; }   /* W has almost no left bearing */
-.cs-hero__line.is-2 { grid-column: 3 / -1; text-indent: -0.08em; }                 /* M */
-.cs-hero__line.is-3 { grid-column: 5 / -1; text-indent: -0.05em; }                 /* S */
-.cs-hero__dot { color: var(--accent); }
-
-
 
 /* ---------------- Chapters ---------------- */
 
@@ -67,9 +40,7 @@
   padding-right: var(--col-gap);
 }
 .cs-aside h2 { text-wrap: balance; }
-/* The orange full stop of the hero and Contacts titles; on the orange Results band it turns light instead. */
-.cs-dot { color: var(--accent); }
-.is-accent .cs-dot { color: var(--paper); }
+
 .cs-body {
   grid-column: 5 / -1;
   display: grid; grid-template-columns: subgrid; align-content: start;
@@ -80,22 +51,16 @@
 /* Body text at a readable measure. */
 .cs-body > .cs-text { grid-column: 1 / span 6; text-wrap: pretty; }
 
-/* Fact tiles in the content column, half of it each (cols 5–8 and 9–12): label at the top, value at
-   the bottom, like the homepage contact tiles. Tiles in a row share the row's height. */
-.cs-tiles { display: grid; grid-template-columns: subgrid; row-gap: var(--col-gap); }
-.cs-tile {
-  grid-column: span 4;
-  display: flex; flex-direction: column; gap: 16px;
-  padding: clamp(20px, 2vw, 32px);
-}
-.cs-tile.is-fact { justify-content: space-between; gap: 32px; min-height: clamp(150px, 12vw, 200px); }
-.cs-tile.is-fact dd { text-wrap: balance; }
+/* Key facts as the properties of a record: label left, value right, in one card. */
+.cs-facts { display: flex; flex-direction: column; gap: 4px; padding: clamp(14px, 1.4vw, 20px) clamp(18px, 2vw, 28px); }
+.cs-facts__row { display: grid; grid-template-columns: minmax(96px, 3fr) minmax(0, 9fr); gap: 16px; align-items: baseline; padding: 8px 0; }
 
 /* One tile across the content column (cols 5–12), items stacked with thin lines between, like the homepage
    Experience tile. The text runs the tile's width but stops at a comfortable measure. */
-.v4 .cs-stack { padding: 0 clamp(20px, 2.4vw, 40px); }
+.v5 .cs-stack { padding: 0 clamp(20px, 2.4vw, 40px); }
 .cs-stack__item { display: flex; flex-direction: column; gap: 12px; padding: clamp(24px, 2.4vw, 40px) 0; }
-.cs-stack__item + .cs-stack__item { border-top: 1px solid var(--line); }
+/* No lines between the items: the spacing separates them. */
+.cs-stack__item + .cs-stack__item { padding-top: 0; }
 .cs-stack__item h3 { text-wrap: balance; }
 .cs-stack__item p { max-width: 65ch; text-wrap: pretty; }
 
@@ -171,7 +136,7 @@
 }
 
 /* Short lists inside a tile: an orange dot per item, no lines. */
-.v4 .cs-dots { display: flex; flex-direction: column; gap: 8px; }
+.v5 .cs-dots { display: flex; flex-direction: column; gap: 8px; }
 .cs-dots li { display: flex; align-items: baseline; gap: 12px; }
 .cs-dots li::before {
   content: ''; flex: none; width: 6px; height: 6px; border-radius: 50%;
@@ -194,10 +159,10 @@
   width: 100%; height: 100%;
   display: flex; align-items: flex-end; justify-content: center; gap: clamp(10px, 1.6vw, 28px);
   padding: clamp(16px, 2vw, 32px) clamp(16px, 2.4vw, 40px) 0;
-  background: #e2e0da;
+  background: var(--paper-2);
 }
-/* .v4 prefix: the homepage resets figure margins with `.v4 figure`, which would cancel the pull-down. */
-.v4 .cs-screen {
+/* .v5 prefix: the homepage resets figure margins with `.v5 figure`, which would cancel the pull-down. */
+.v5 .cs-screen {
   flex: none; width: 42%; margin-bottom: -35%;
   display: flex; flex-direction: column; align-items: center; gap: clamp(12px, 1.4vw, 20px);
 }
@@ -224,7 +189,7 @@
    the right shows the bottom half and runs off the top edge, its label moved under it. No vertical padding,
    so each shows exactly half a screen. */
 .cs-screens.is-split { padding-top: 0; gap: clamp(16px, 4vw, 64px); }
-.v4 .cs-screen.is-bottom { align-self: flex-start; margin-bottom: 0; margin-top: -35%; flex-direction: column-reverse; }
+.v5 .cs-screen.is-bottom { align-self: flex-start; margin-bottom: 0; margin-top: -35%; flex-direction: column-reverse; }
 /* Keycaps in the labels, echoing the terminal's physical keys. */
 .cs-key {
   min-width: 26px; height: 26px; padding: 0 7px;
@@ -244,7 +209,7 @@
   --cap: calc(22px + clamp(12px, 1.4vw, 20px));
   align-items: flex-start; padding-top: clamp(20px, 2.6vw, 44px);
 }
-.v4 .cs-screen.is-device { width: var(--dev); margin-bottom: 0; }
+.v5 .cs-screen.is-device { width: var(--dev); margin-bottom: 0; }
 .cs-device { position: relative; display: block; width: 100%; }
 .cs-screen.is-device img { border-radius: 0; box-shadow: none; }
 .cs-device__frame { display: block; width: 100%; height: auto; filter: drop-shadow(0 28px 36px rgba(18, 18, 18, 0.28)); }
@@ -259,7 +224,7 @@
    bottom edge, label under it, and runs off the top — its screen scrolled to the bottom (the SHIFT bar) above the
    full keypad. */
 .cs-screens.is-device.is-split { padding-bottom: clamp(20px, 2.6vw, 44px); }
-.v4 .cs-screen.is-device.is-bottom { align-self: flex-end; margin-top: 0; }
+.v5 .cs-screen.is-device.is-bottom { align-self: flex-end; margin-top: 0; }
 .is-bottom .cs-device__screen { display: flex; flex-direction: column; justify-content: flex-end; }
 .is-bottom .cs-device__screen img { flex: none; }
 
@@ -269,7 +234,7 @@
 /* Flow: bento tiles in a row (five equal columns across the content width) with an arrow chip in each gap.
    The gap is wider than the page's column gap so the arrow fits inside it without touching either tile.
    The tiles crop their illustration (overflow hidden); the arrow lives on the list item, outside the tile. */
-.v4 .cs-flow {
+.v5 .cs-flow {
   --flow-gap: clamp(44px, 4vw, 64px);
   --arrow: clamp(28px, 2.4vw, 36px);
   display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--flow-gap);
@@ -289,13 +254,6 @@
 }
 .cs-flow__item:nth-child(even) .cs-step__art { transform: rotate(10deg); }
 .cs-step__art * { vector-effect: non-scaling-stroke; }
-.cs-flow__arrow svg { width: 60%; height: 60%; }
-.cs-flow__arrow {
-  position: absolute; z-index: 1; top: 50%; right: calc(var(--flow-gap) / -2); transform: translate(50%, -50%);
-  width: var(--arrow); height: var(--arrow); border-radius: 50%;
-  display: grid; place-items: center;
-  background: var(--ink); color: var(--paper);
-}
 
 /* ---------------- Results: accent chapter ---------------- */
 
@@ -306,36 +264,16 @@
 .is-accent .cs-chapter__inner { padding: clamp(48px, 5vw, 88px) 0; }
 .is-accent .cs-body { row-gap: var(--col-gap); }
 
-.cs-stats { display: grid; grid-template-columns: subgrid; gap: var(--col-gap); }
-.cs-stat {
-  grid-column: span 3;
-  display: flex; flex-direction: column; justify-content: space-between; gap: 32px;
-  min-height: clamp(180px, 15vw, 260px);
-  padding: clamp(20px, 2vw, 32px);
-}
-.cs-stat__value { text-indent: -0.04em; }
-/* A headline stat across half the band (Q-sight's rollout), above the regular four. */
-.cs-stat.is-wide { grid-column: span 6; }
-/* A stat that is a status rather than a number (WMS "Pilot"). */
-.cs-stat.is-note .cs-stat__value { color: var(--accent-ink); }
-.cs-stat .t-body { text-wrap: pretty; }
-
-/* Results: one tile on the content column, outlined in the accent, a row per figure — the number on the left, its
-   label (and an optional note under it) right-aligned on the right, thin lines between the rows like the Experience
-   tile. Blocks that follow it in the chapter (the WMS reports, the Vlife chart) keep the standard gap. */
-.v4 .cs-figures { padding: 0 clamp(20px, 2.4vw, 40px); border: 1.5px solid var(--accent); }
-.cs-figures__row {
-  display: flex; align-items: center; justify-content: space-between; gap: 24px;
-  padding: clamp(18px, 1.8vw, 28px) 0;
-}
-.cs-figures__row + .cs-figures__row { border-top: 1px solid var(--line); }
-.cs-figures__value { flex: none; text-indent: -0.04em; }
-.cs-figures__label { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; text-align: right; max-width: 34ch; }
-.cs-figures__label .t-lead { text-wrap: balance; }
+/* Results: a card per figure, two in a row: the number on top, its label and note under it. */
+.cs-figures { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--col-gap); }
+.cs-figures__row { display: flex; flex-direction: column; justify-content: space-between; gap: 20px; padding: clamp(18px, 2vw, 28px); min-height: 160px; }
+.cs-figures__value { color: var(--accent-ink); }
+.cs-figures__label { display: flex; flex-direction: column; gap: 2px; }
+.cs-figures__label .t-body { text-wrap: balance; }
 
 .cs-reports { display: flex; flex-direction: column; gap: 20px; padding: clamp(20px, 2vw, 32px); }
 .cs-reports p { max-width: 52ch; text-wrap: pretty; }
-.v4 .cs-reports .cs-dots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px var(--col-gap); }
+.v5 .cs-reports .cs-dots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px var(--col-gap); }
 .cs-reports .cs-dots li { text-wrap: pretty; }
 
 /* ---------------- Figures (Vlife) ---------------- */
@@ -360,8 +298,6 @@
 /* A tall, roughly square picture: centred on eight columns so it doesn't run a full screen high. */
 .cs-body > .cs-fig.is-center { grid-column: 3 / span 8; }
 
-.cs-link { display: inline-flex; align-items: center; gap: 8px; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
-.cs-link:hover { color: var(--accent-ink); }
 .cs-links { display: flex; flex-wrap: wrap; gap: 8px 24px; }
 
 /* The app before the redesign: a bento on the page columns, in two rows. Each row has two grid rows — frames, then
@@ -375,6 +311,20 @@
 .cs-shots__row > .is-5 { grid-column: span 5; }
 .cs-shots__row > .is-3 { grid-column: span 3; }
 .cs-shots__row > .is-tall .cs-fig__frame { min-height: clamp(380px, 36vw, 600px); }
+/* Desktop screenshots on plates: a white card with the screen inset and its caption under it. The wider inset keeps
+   the screen's corners nearly square (concentric with the card: 24px − 18px) — app windows aren't round. */
+.cs-shots__row.is-plate > .cs-fig { --plate-pad: 18px; padding: var(--plate-pad); }
+.cs-shots__row.is-plate .cs-fig__frame { border-radius: calc(var(--radius) - var(--plate-pad)); }
+.cs-shots__row.is-plate figcaption { padding: 2px 4px 0; }
+/* A pair of screenshots with different proportions: both frames take one 16:9 shape, the image sits at the top with
+   no margin, and the space left under the wider one continues the app — its sidebar (the first 10.93% of the width),
+   the sidebar's edge, then the page. Colours are sampled from the WMS desktop screenshots. */
+.v5 .cs-shots__row.is-even .cs-fig { --pad: 0px; }
+.cs-shots__row.is-even .cs-fig__frame {
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(90deg, rgb(20 25 33) 0 10.93%, rgb(27 33 37) 0 calc(10.93% + 1px), rgb(14 18 24) 0);
+}
+.cs-shots__row.is-even .cs-fig__frame img { object-position: top; }
 .cs-shots__note {
   grid-column: 7 / span 6; grid-row: 1;   /* the frames row only, right of the phone screens */
   display: flex; flex-direction: column; justify-content: space-between; gap: 24px;
@@ -383,7 +333,7 @@
 .cs-shots__note p { text-wrap: pretty; max-width: 52ch; }
 /* The app's turns as a short timeline: a ring per direction joined by a thin line, the last one filled orange —
    where it settled. Each ring is centred on the first line of its item (0.5lh of the item's own type size). */
-.v4 .cs-turns { --gap: clamp(16px, 1.8vw, 28px); --ring: 14px; display: flex; flex-direction: column; gap: var(--gap); }
+.v5 .cs-turns { --gap: clamp(16px, 1.8vw, 28px); --ring: 14px; display: flex; flex-direction: column; gap: var(--gap); }
 .cs-turns li { --ring-top: calc(0.5lh - var(--ring) / 2); position: relative; display: flex; flex-direction: column; gap: 4px; padding-left: calc(var(--ring) + 18px); }
 .cs-turns li::before {
   content: ''; position: absolute; left: 0; top: var(--ring-top); z-index: 1;
@@ -396,13 +346,6 @@
   top: calc(var(--ring-top) + var(--ring)); height: calc(100% + var(--gap) - var(--ring));
   background: var(--line);
 }
-
-/* Results evidence: the Crashlytics chart and the remaining results side by side, half the width each. */
-.cs-evidence { display: grid; grid-template-columns: subgrid; gap: var(--col-gap); }
-.cs-evidence > * { grid-column: span 6; }
-.v4 .cs-evidence__shot { padding: clamp(12px, 1.4vw, 20px); display: grid; place-items: center; }
-.cs-evidence__shot img { display: block; width: 100%; height: auto; border-radius: var(--radius-in); }
-.v4 .cs-evidence .cs-reports .cs-dots { grid-template-columns: minmax(0, 1fr); }
 
 /* ---------------- Qazaq Energy Charge ---------------- */
 
@@ -433,21 +376,41 @@
 .cs-tour__zone { fill: none; stroke: var(--accent); stroke-width: 2px; vector-effect: non-scaling-stroke; }
 .cs-tour .stack__text .t-label { color: var(--accent-ink); }
 
-/* ---------------- Other projects ---------------- */
+/* ---------------- Key decisions / main screen ---------------- */
 
-/* The homepage section head (title + button over a strong rule), then the "Latest project" plaques. */
-.cs-others { padding-top: var(--chapter); }
-/* No rule under the heading, like the homepage Projects head. */
-.cs-others .section-head { border-bottom: 0; }
-.v4 .cs-others__list { margin-top: clamp(24px, 2.4vw, 40px); display: flex; flex-direction: column; gap: 12px; }
-.v4 .cs-others .latest { margin-top: 0; }
+/* Full-width panels that stick under the toolbar and stack over each other while scrolling (the v4 homepage stack).
+   Each panel's offset is capped by useStickyFit so a tall one sticks by its bottom edge. */
+.stack { display: flex; flex-direction: column; gap: clamp(20px, 2.4vw, 40px); }
+.stack__item { position: sticky; top: min(calc(var(--bar) + 20px + var(--i) * 14px), var(--stick-max, 100vh)); }
+.stack__panel {
+  padding: var(--tile-pad); row-gap: 0; align-items: start;
+  box-shadow: 0 -12px 32px -24px rgba(22, 24, 29, 0.24);
+}
+.stack__frame { grid-column: 1 / span 8; overflow: hidden; border-radius: var(--radius-in); aspect-ratio: 16 / 10; max-height: calc(100vh - var(--bar) - 100px); width: 100%; }
+.stack__image { width: 100%; height: 100%; border-radius: 0; }
+.stack__text { grid-column: 9 / span 4; display: flex; flex-direction: column; gap: 14px; padding: 14px 14px 10px 4px; }
+
+/* ---------------- Next project ---------------- */
+
+.cs-next { padding-top: var(--chapter); padding-bottom: 8px; }
+.cs-next__card {
+  position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 300px); align-items: center; gap: 24px;
+  padding: var(--tile-pad) var(--tile-pad) var(--tile-pad) clamp(20px, 2.4vw, 36px);
+}
+.cs-next__text { display: flex; flex-direction: column; gap: 8px; padding: 20px 0; padding-right: 56px; }
+.cs-next__text .t-body { max-width: 52ch; text-wrap: pretty; }
+.cs-next__thumb { display: block; overflow: hidden; border-radius: var(--radius-in); aspect-ratio: 16 / 10; }
+.cs-next__image { width: 100%; height: 100%; border-radius: 0; transition: transform 900ms var(--ease); }
+
+@media (hover: hover) {
+  .cs-next__card:hover { background: var(--surface); box-shadow: var(--shadow-2); }
+  .cs-next__card:hover .cs-next__image { transform: scale(1.04); }
+  
+}
 
 /* ---------------- Responsive ---------------- */
 
-@media (max-width: 1024px) {
-  .cs-hero__line.is-2 { grid-column: 2 / -1; }
-  .cs-hero__line.is-3 { grid-column: 3 / -1; }
-
+@container page (max-width: 1024px) {
   /* Chapters: title above, content below on the full 12 columns (rows split 5 / 7 like the homepage jobs). */
   .cs-chapter__inner { row-gap: clamp(24px, 4vw, 40px); }
   .cs-aside { grid-column: 1 / -1; position: static; padding-right: 0; }
@@ -457,12 +420,18 @@
   .is-wide .cs-aside__intro { grid-column: 1 / span 8; grid-row: auto; }
   .cs-body { grid-column: 1 / -1; }
   .cs-body > .cs-text { grid-column: 1 / span 9; }
-  .cs-stat, .cs-tile { grid-column: span 6; }
+  
+  /* The decision and screen panels: picture on top, text under it. */
+  .stack__item { position: static; }
+  .stack__panel { box-shadow: none; }
+  .stack__frame, .stack__text { grid-column: 1 / -1; }
+  .stack__frame { max-height: none; }
+  .stack__text { padding: 18px 12px 10px; }
   /* Flow: one tile per row, arrows point down between them. */
-  .v4 .cs-flow { grid-template-columns: minmax(0, 1fr); }
+  .v5 .cs-flow { grid-template-columns: minmax(0, 1fr); }
   .cs-step { min-height: 104px; padding-bottom: clamp(18px, 1.6vw, 28px); padding-right: 140px; }
   .cs-step__art { width: 112px; right: -8px; bottom: -34px; }
-  .cs-flow__arrow { top: auto; right: 50%; bottom: calc(var(--flow-gap) / -2); transform: translate(50%, 50%) rotate(90deg); }
+  
   /* Context bento: clip and the side column split the width in half. */
   .cs-bento__main { grid-column: 1 / span 6; }
   .cs-bento__side { grid-column: 7 / span 6; }
@@ -471,7 +440,7 @@
   .cs-card__art { width: 26%; right: -4%; bottom: -16%; }
   /* Figures: wide shots and the text tile take the full width; phone screens go two to a row. */
   .cs-body > .cs-fig.is-center { grid-column: 1 / -1; }
-  .cs-shots__row > .is-7, .cs-shots__row > .is-5, .cs-shots__note, .cs-evidence > * { grid-column: 1 / -1; }
+  .cs-shots__row > .is-7, .cs-shots__row > .is-5, .cs-shots__note{ grid-column: 1 / -1; }
   .cs-shots__row > .is-5 .cs-fig__frame { aspect-ratio: 1400 / 1478; }
   .cs-shots__row > .is-3 { grid-column: span 6; }
   /* Stacked items start a new pair of grid rows; restore the block spacing above them. */
@@ -482,20 +451,20 @@
   .cs-shots__row > .is-6 + .is-6 { margin-top: calc(var(--block) - 12px); }
 }
 
-@media (max-width: 640px) {
-  .cs-hero__line.is-2 { grid-column: 3 / -1; }
-  .cs-hero__line.is-3 { grid-column: 5 / -1; }
-
-  .cs-body > .cs-text, .cs-tile { grid-column: 1 / -1; }
-  .v4 .cs-reports .cs-dots { grid-template-columns: minmax(0, 1fr); }
-  /* Stats: one per row, number on the left and its label beside it — a 2×2 grid leaves the labels too narrow. */
-  .cs-stat, .cs-stat.is-wide { grid-column: 1 / -1; min-height: 0; flex-direction: row; align-items: center; gap: 20px; }
-  .cs-stat__value { flex: 0 0 36%; }
+@container page (max-width: 640px) {
+  .cs-body > .cs-text { grid-column: 1 / -1; }
+  .cs-figures { grid-template-columns: minmax(0, 1fr); }
+  .cs-figures__row { min-height: 0; }
+  .cs-facts__row { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .cs-next__card { grid-template-columns: minmax(0, 1fr); padding-left: var(--tile-pad); }
+  .cs-next__text { padding: 16px 14px 8px; }
+  .cs-next__thumb { order: -1; }
+  
+  .v5 .cs-reports .cs-dots { grid-template-columns: minmax(0, 1fr); }
+  
+  
   /* Figures: the label drops under the number, left-aligned. */
-  .cs-figures__row { flex-direction: column; align-items: flex-start; gap: 6px; }
-  .cs-figures__label { align-items: flex-start; text-align: left; max-width: none; }
   .cs-aside__intro, .is-wide .cs-aside__intro, .is-wide .cs-body > .cs-text { grid-column: 1 / -1; }
-  .cs-tile.is-fact { min-height: 0; gap: 16px; }
   /* Phone: text first, then the clip, then the photo. */
   .cs-bento__main, .cs-bento__text, .cs-bento__photo { grid-column: 1 / -1; }
   .cs-bento__side { display: contents; }

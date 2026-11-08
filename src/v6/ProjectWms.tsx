@@ -1,11 +1,11 @@
 import { CSSProperties, Fragment, ReactNode, useEffect, useRef } from 'react'
-import { ArrowE, Contacts, GridOverlay, Media, TopBar, reveal, useHashScroll, useReveal, useStickyFit } from './shared'
-import { ArtDef, Cards, CaseHero, Chapter, Facts, FigureRow, Figures, HOME, OtherProjects, Photo, StackTile, Text } from './case'
-import './v4.css'
+import { ArrowRight } from '@phosphor-icons/react'
+import { Media, reveal, useStickyFit } from './shared'
+import { ArtDef, Cards, CaseHero, Chapter, FigureRow, Figures, Photo, StackTile, Text, CasePage } from './case'
 import './case.css'
 
 // Case study: Warehouse Management System. Content from Claude Design
-// "Project - Warehouse Management System.dc.html", laid out on the v4 homepage grid.
+// "Project - Warehouse Management System.dc.html", laid out on the homepage grid.
 
 const PROBLEM = [
   {
@@ -89,8 +89,15 @@ const DECISIONS: { title: string; text: string[]; screens?: Screen[]; split?: bo
 const RESULTS: FigureRow[] = [
   { value: '13', label: 'Warehouse flows in one system', note: 'From container unloading to shipping' },
   { value: '13', label: 'Roles working in the same data', note: 'From the receiving storekeeper to plant management' },
-  { value: '4', label: 'Months to the pilot', note: 'From the first walk-through to the floor' },
-  { value: 'Pilot', label: 'On part of the warehouse', note: 'Rollout to the rest is in progress' },
+  { value: '100+', label: 'Screens for the handheld terminal', note: 'Every warehouse flow, step by step' },
+  { value: '40+', label: 'Desktop screens', note: 'The first version; more modules are on the way' },
+]
+
+/** Two of the desktop reports, shown on a monitor the way the terminal screens are shown on the device. */
+type DeskShot = { src: string; alt: string; caption: string; width: number; height: number }
+const MONITORS: DeskShot[] = [
+  { src: '/assets/wms-desk-stock-items.webp', width: 1920, height: 1080, alt: 'Stock by item: physical stock, in the store, in cases, blocked and available, with flags such as Below min', caption: 'Stock by item: physical, in the store, in cases, blocked and available' },
+  { src: '/assets/wms-desk-picking-people.webp', width: 1920, height: 1080, alt: 'Picking by employee: tasks, replenishments and deliveries, median time and share within the target', caption: 'Picking by employee: tasks, median time and share within the target' },
 ]
 
 /** The backbone flow that went live first, in order. */
@@ -203,6 +210,22 @@ const STEP_ART: Record<StepArt, ReactNode> = {
 }
 
 /** A flow drawn as bento tiles in a row with arrows between them; each tile has its illustration in the corner. */
+/** A desktop screenshot on a monitor: a thin dark bezel, a neck and a foot, on the same grey plate as the terminal pictures. */
+function Monitor({ src, alt, caption, width, height }: DeskShot) {
+  return (
+    <figure className="cs-monitor" {...reveal()}>
+      <span className="cs-monitor__plate">
+        <span className="cs-monitor__device">
+          <span className="cs-monitor__screen"><img src={src} alt={alt} width={width} height={height} loading="lazy" /></span>
+          <span className="cs-monitor__neck" aria-hidden="true" />
+          <span className="cs-monitor__foot" aria-hidden="true" />
+        </span>
+      </span>
+      <figcaption className="t-small">{caption}</figcaption>
+    </figure>
+  )
+}
+
 function Flow({ steps }: { steps: { title: string; art: StepArt }[] }) {
   return (
     <ol className="cs-flow">
@@ -214,7 +237,6 @@ function Flow({ steps }: { steps: { title: string; art: StepArt }[] }) {
               <g fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{STEP_ART[st.art]}</g>
             </svg>
           </div>
-          {i < steps.length - 1 && <span className="cs-flow__arrow" aria-hidden="true"><ArrowE /></span>}
         </li>
       ))}
     </ol>
@@ -268,7 +290,7 @@ function Screens({ screens, split, arrowAt, device }: { screens: Screen[]; split
     <span className={`cs-screens${split ? ' is-split' : ''}${device ? ' is-device' : ''}`} style={arrowAt === undefined ? undefined : ({ '--arrow-at': arrowAt } as CSSProperties)}>
       {screens.map((sc, i) => (
         <Fragment key={`${sc.src}-${i}`}>
-          {i > 0 && !split && <span className="cs-screens__arrow" aria-hidden="true"><ArrowE /></span>}
+          {i > 0 && !split && <span className="cs-screens__arrow" aria-hidden="true"><ArrowRight size={18} /></span>}
           <figure className={`cs-screen${sc.crop === 'bottom' ? ' is-bottom' : ''}${device ? ' is-device' : ''}`}>
             <figcaption className="t-small">
               {sc.keys ? sc.keys.map((k) => <kbd key={k} className="cs-key">{k}</kbd>) : <span className="cs-screen__n">{i + 1}</span>}
@@ -320,81 +342,73 @@ function DecisionStack() {
 /* ---------- sections ---------- */
 
 export default function ProjectWms() {
-  useReveal()
-  useHashScroll()
   return (
-    <div className="v4">
-      <TopBar home={HOME} />
-      <main>
-        <CaseHero
-          lines={['Warehouse', 'Management', 'System']}
-          image="/assets/hyundai-plant-hq.webp"
-          label="The Hyundai Trans Kazakhstan plant"
-        />
+    <CasePage>
+      <CaseHero
+        lines={['Warehouse', 'Management', 'System']}
+        image="/assets/hyundai-plant-hq.webp"
+        label="The Hyundai Trans Kazakhstan plant"
+        facts={[
+          { label: 'Role', value: 'Sole and lead product designer' },
+          { label: 'Timeline', value: '4 months, 2026' },
+        ]}
+      >
+        <p className="cs-lede t-lead">Part of the digital transformation of the Hyundai Trans Kazakhstan car plant. Paper forms and spreadsheets are being replaced with one connected platform that covers the whole path of a car part, from the moment it arrives at the warehouse to the quality check of a finished vehicle.</p>
+      </CaseHero>
 
-        <Chapter title="Overview">
-          <Facts
-            items={[
-              { label: 'Role', value: 'Sole and lead product designer' },
-              { label: 'Timeline', value: '4 months, 2026' },
-            ]}
+      <Chapter title="The problem">
+        <StackTile items={PROBLEM} />
+      </Chapter>
+
+      <Chapter title="Constraints" wide>
+        <Cards items={CONSTRAINTS} art={ART} />
+      </Chapter>
+
+      <Chapter title="Context of use" wide>
+        <div className="cs-bento">
+          <Loop
+            className="cs-bento__main"
+            src="/assets/wms-how-it-works.mp4"
+            label="The old flow, before the redesign: an operator scans a case and then the cell labels on the rack with the handheld terminal"
+            caption="How it worked before the redesign"
           />
-        </Chapter>
-
-        <Chapter title="The problem">
-          <StackTile items={PROBLEM} />
-        </Chapter>
-
-        <Chapter title="Constraints" wide>
-          <Cards items={CONSTRAINTS} art={ART} />
-        </Chapter>
-
-        <Chapter title="Context of use" wide>
-          <div className="cs-bento">
-            <Loop
-              className="cs-bento__main"
-              src="/assets/wms-how-it-works.mp4"
-              label="The old flow, before the redesign: an operator scans a case and then the cell labels on the rack with the handheld terminal"
-              caption="How it worked before the redesign"
-            />
-            <div className="cs-bento__side">
-              <div className="cs-bento__text tile" {...reveal(80)}>
-                <p className="t-lead">The terminal is used in gloves, one-handed, in poor light, walking between racks — usually with the other hand on a case.</p>
-                <p className="t-body muted">Everything about the interface follows from that:</p>
-                <ul className="cs-dots t-body">
-                  <li>One decision per screen</li>
-                  <li>Type you can read at arm’s length</li>
-                  <li>As few taps as the flow allows</li>
-                </ul>
-              </div>
-              <Photo className="cs-bento__photo" image="/assets/wms-warehouse.webp" position="center 55%" caption="The plant warehouse" delay={160} />
+          <div className="cs-bento__side">
+            <div className="cs-bento__text tile" {...reveal(80)}>
+              <p className="t-lead">The terminal is used in gloves, one-handed, in poor light, walking between racks — usually with the other hand on a case.</p>
+              <p className="t-body muted">Everything about the interface follows from that:</p>
+              <ul className="cs-dots t-body">
+                <li>One decision per screen</li>
+                <li>Type you can read at arm’s length</li>
+                <li>As few taps as the flow allows</li>
+              </ul>
             </div>
+            <Photo className="cs-bento__photo" image="/assets/wms-warehouse.webp" position="center 55%" caption="The plant warehouse" delay={160} />
           </div>
-        </Chapter>
+        </div>
+      </Chapter>
 
-        <Chapter title="Key decisions" wide>
-          <DecisionStack />
-        </Chapter>
+      <Chapter title="Key decisions" wide>
+        <DecisionStack />
+      </Chapter>
 
-        <Chapter title="Validation" wide intro="Rolled out in stages rather than all at once. First the backbone flow:">
-          <Flow steps={BACKBONE} />
-          <Text>We ran it, fixed it, and only then added the rest. The old system stayed available the whole time so nothing on the plant could come to a stop.</Text>
-        </Chapter>
+      <Chapter title="Desktop reports" wide intro="The terminal is for the floor. The warehouse lead and plant management read the same data on desktop: what is in stock, where it is, and what happened to it.">
+        {MONITORS.map((s) => <Monitor key={s.src} {...s} />)}
+      </Chapter>
 
-        <Chapter title="Results" intro="The backbone flow runs on part of the warehouse; the rest follows in stages.">
-          <Figures items={RESULTS} />
-          <div className="cs-reports tile" {...reveal()}>
-            <p className="t-lead">Exact figures are still being collected, so here is what the warehouse reports:</p>
-            <ul className="cs-dots t-body">
-              {REPORTS.map((r) => <li key={r}>{r}</li>)}
-            </ul>
-          </div>
-        </Chapter>
+      <Chapter title="Validation" wide intro="Rolled out in stages rather than all at once. First the backbone flow:">
+        <Flow steps={BACKBONE} />
+        <Text>We ran it, fixed it, and only then added the rest. The old system stayed available the whole time so nothing on the plant could come to a stop.</Text>
+      </Chapter>
 
-        <OtherProjects current="Warehouse Management System" />
-        <Contacts />
-      </main>
-      {import.meta.env.DEV && <GridOverlay />}
-    </div>
+      <Chapter title="Results" intro="The backbone flow runs on part of the warehouse; the rest follows in stages.">
+        <Figures items={RESULTS} />
+        <div className="cs-reports tile" {...reveal()}>
+          <p className="t-lead">Exact figures are still being collected, so here is what the warehouse reports:</p>
+          <ul className="cs-dots t-body">
+            {REPORTS.map((r) => <li key={r}>{r}</li>)}
+          </ul>
+        </div>
+      </Chapter>
+    </CasePage>
   )
 }

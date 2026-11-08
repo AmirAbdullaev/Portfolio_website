@@ -1,12 +1,11 @@
-import { ArrowNE, Contacts, GridOverlay, TopBar, reveal, useHashScroll, useReveal } from './shared'
-import { ArtDef, Cards, CaseHero, Chapter, Facts, Figure, FigureRow, Figures, HOME, OtherProjects, StackTile, Text } from './case'
-import './v4.css'
+import { ArrowUpRight } from '@phosphor-icons/react'
+import { reveal } from './shared'
+import { ArtDef, Cards, CaseHero, Chapter, Figure, FigureRow, Figures, StackTile, Text, CasePage } from './case'
 import './case.css'
 
 // Case study: Vlife, a loyalty program in a mobile app. Content from the Notion portfolio page,
 // laid out with the same blocks as the WMS case study.
 
-const TITLE = 'Vlife — Customer Loyalty Program'
 const GOOGLE_PLAY = 'https://play.google.com/store/apps/details?id=kz.vlife.grandera'
 const APP_STORE = 'https://apps.apple.com/ru/app/vlife-%D0%B0%D0%B7%D1%81-%D0%BF%D0%B0%D1%80%D1%82%D0%BD%D0%B5%D1%80%D1%8B-%D0%B1%D0%B0%D0%BB%D0%BB%D1%8B/id1527733098'
 
@@ -197,10 +196,10 @@ function BeforeShots() {
           alt="Two screens of the old store: tiles with shadows next to flat list items in a different typeface"
           caption="Shadows, fonts and spacing change from screen to screen"
         />
-        </div>
-        <div className="cs-shots__row">
+      </div>
+      <div className="cs-shots__row">
         <Figure
-          className="is-3 is-tall"
+          className="is-7 is-tall"
           fit
           src="/assets/vlife-before-nav.webp"
           width={720}
@@ -209,7 +208,7 @@ function BeforeShots() {
           caption="Navigation buttons too small to hit"
         />
         <Figure
-          className="is-3 is-tall"
+          className="is-5 is-tall"
           fit
           delay={80}
           src="/assets/vlife-before-corners.webp"
@@ -218,7 +217,9 @@ function BeforeShots() {
           alt="The old payments screen: a block with rounded corners above a block with square ones"
           caption="Some components have rounded corners, some don’t"
         />
-        <div className="cs-shots__note tile" {...reveal(160)}>
+      </div>
+      <div className="cs-shots__row">
+        <div className="cs-shots__note is-12 tile" {...reveal()}>
           <p className="t-label">How the app got here</p>
           <ol className="cs-turns">
             {TURNS.map((t, i) => (
@@ -238,96 +239,83 @@ function BeforeShots() {
 /* ---------- page ---------- */
 
 export default function ProjectVlife() {
-  useReveal()
-  useHashScroll()
   return (
-    <div className="v4">
-      <TopBar home={HOME} />
-      <main>
-        <CaseHero
-          lines={['Vlife', 'Loyalty', 'Program']}
-          image="/assets/project-vlife.webp"
-          position="center 40%"
-          label="The redesigned Vlife home screen on a phone"
+    <CasePage>
+      <CaseHero
+        lines={['Vlife', 'Loyalty', 'Program']}
+        image="/assets/project-vlife.webp"
+        position="center 40%"
+        label="The redesigned Vlife home screen on a phone"
+        facts={[
+          { label: 'Role', value: 'Product designer' },
+          { label: 'Timeline', value: 'January – November 2024' },
+          { label: 'Platform', value: 'iOS · Android' },
+          {
+            label: 'Download',
+            value: (
+              <span className="cs-links">
+                <a className="text-link" href={APP_STORE} target="_blank" rel="noopener">App Store <ArrowUpRight size={16} aria-hidden="true" /></a>
+                <a className="text-link" href={GOOGLE_PLAY} target="_blank" rel="noopener">Google Play <ArrowUpRight size={16} aria-hidden="true" /></a>
+              </span>
+            ),
+          },
+        ]}
+      >
+        <p className="cs-lede t-lead">Vlife is a loyalty program in a mobile app. People earn points with a network of partners and spend them there — on fuel, payments, car insurance and other services — and get bonuses for doing so.</p>
+      </CaseHero>
+
+      <Chapter title="The product" wide intro="One app for points, fuel and everyday payments, built on a network of partners.">
+        <Figure src="/assets/vlife-store.webp" width={2014} height={998} alt="Vlife App Store screenshots: earning points, the home screen, EV charging and the Bronze to Diamond loyalty levels" caption="Vlife on the App Store" />
+        <Cards items={FEATURES} art={ART} />
+      </Chapter>
+
+      <Chapter title="The problem" wide intro="Before it settled on loyalty, the app changed direction several times — and it showed.">
+        <BeforeShots />
+      </Chapter>
+
+      <Chapter title="What it led to">
+        <StackTile items={OUTCOME} />
+      </Chapter>
+
+      <Chapter title="Goals">
+        <StackTile items={GOALS} />
+      </Chapter>
+
+      <Chapter title="What was done" wide>
+        <Cards items={DONE} art={ART} />
+        <Figure pad src="/assets/vlife-design-system.webp" width={2400} height={1928} alt="Design system pages: tab bar in light and dark, app bar variants, an accordion and list items" caption="Part of the new design system: tab bar, app bar, accordion and lists" />
+        <Text>We also reworked the profile level system, so people can see their status and how far it is to the next one — and fixed a lot of small things along the way.</Text>
+      </Chapter>
+
+      <Chapter title="After the redesign" wide>
+        <Figure
+          className="is-center"
+          pad
+          src="/assets/vlife-after.webp"
+          width={2400}
+          height={2223}
+          alt="Redesigned screens: the home screen with status, partners, charging and payments; the charging subscription catalogue; limited-time offers; an active subscription"
+          caption="Home, the charging subscription catalogue, limited-time offers and an active subscription"
         />
+      </Chapter>
 
-        <Chapter title="Overview">
-          <Facts
-            items={[
-              { label: 'Role', value: 'Product designer' },
-              { label: 'Timeline', value: 'January – November 2024' },
-              { label: 'Platform', value: 'iOS · Android' },
-              {
-                label: 'Download',
-                value: (
-                  <span className="cs-links">
-                    <a className="cs-link" href={APP_STORE} target="_blank" rel="noopener">App Store <ArrowNE size={20} /></a>
-                    <a className="cs-link" href={GOOGLE_PLAY} target="_blank" rel="noopener">Google Play <ArrowNE size={20} /></a>
-                  </span>
-                ),
-              },
-            ]}
-          />
-          <Text>Vlife is a loyalty program in a mobile app. People earn points with a network of partners and spend them there — on fuel, payments, car insurance and other services — and get bonuses for doing so.</Text>
-        </Chapter>
-
-        <Chapter title="The product" wide intro="One app for points, fuel and everyday payments, built on a network of partners.">
-          <Figure src="/assets/vlife-store.webp" width={2014} height={998} alt="Vlife App Store screenshots: earning points, the home screen, EV charging and the Bronze to Diamond loyalty levels" caption="Vlife on the App Store" />
-          <Cards items={FEATURES} art={ART} />
-        </Chapter>
-
-        <Chapter title="The problem" wide intro="Before it settled on loyalty, the app changed direction several times — and it showed.">
-          <BeforeShots />
-        </Chapter>
-
-        <Chapter title="What it led to">
-          <StackTile items={OUTCOME} />
-        </Chapter>
-
-        <Chapter title="Goals">
-          <StackTile items={GOALS} />
-        </Chapter>
-
-        <Chapter title="What was done" wide>
-          <Cards items={DONE} art={ART} />
-          <Figure pad src="/assets/vlife-design-system.webp" width={2400} height={1928} alt="Design system pages: tab bar in light and dark, app bar variants, an accordion and list items" caption="Part of the new design system: tab bar, app bar, accordion and lists" />
-          <Text>We also reworked the profile level system, so people can see their status and how far it is to the next one — and fixed a lot of small things along the way.</Text>
-        </Chapter>
-
-        <Chapter title="After the redesign" wide>
-          <Figure
-            className="is-center"
-            pad
-            src="/assets/vlife-after.webp"
-            width={2400}
-            height={2223}
-            alt="Redesigned screens: the home screen with status, partners, charging and payments; the charging subscription catalogue; limited-time offers; an active subscription"
-            caption="Home, the charging subscription catalogue, limited-time offers and an active subscription"
-          />
-        </Chapter>
-
-        <Chapter title="Results" intro="What changed after the redesign, by the numbers.">
-          <Figures items={RESULTS} />
-          <Figure
-            pad
-            src="/assets/vlife-crashlytics.webp"
-            width={1228}
-            height={636}
-            alt="Crash-free users rising from 85% to 95.07% over a week in April 2025; crash-free sessions at 90.38%; crashes down 45.3%"
-            caption="Crashlytics, April 2025: crash-free users up to 95%, crashes down 45%"
-          />
-          <div className="cs-reports tile" {...reveal()}>
-            <p className="t-lead">Also:</p>
-            <ul className="cs-dots t-body">
-              {ALSO.map((r) => <li key={r}>{r}</li>)}
-            </ul>
-          </div>
-        </Chapter>
-
-        <OtherProjects current={TITLE} />
-        <Contacts />
-      </main>
-      {import.meta.env.DEV && <GridOverlay />}
-    </div>
+      <Chapter title="Results" intro="What changed after the redesign, by the numbers.">
+        <Figures items={RESULTS} />
+        <Figure
+          pad
+          src="/assets/vlife-crashlytics.webp"
+          width={1228}
+          height={636}
+          alt="Crash-free users rising from 85% to 95.07% over a week in April 2025; crash-free sessions at 90.38%; crashes down 45.3%"
+          caption="Crashlytics, April 2025: crash-free users up to 95%, crashes down 45%"
+        />
+        <div className="cs-reports tile" {...reveal()}>
+          <p className="t-lead">Also:</p>
+          <ul className="cs-dots t-body">
+            {ALSO.map((r) => <li key={r}>{r}</li>)}
+          </ul>
+        </div>
+      </Chapter>
+    </CasePage>
   )
 }

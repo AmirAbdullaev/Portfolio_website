@@ -1,0 +1,318 @@
+/* Portfolio v5: a light B2B-app layout. A floating white sidebar (a bento card) on a soft tinted page; the page
+   column holds white cards. No outlines anywhere: surfaces are told apart by tone and soft shadow.
+   Type and whitespace follow the Fishbowl CRM case by Rondesignlab: a wide geometric sans at regular weight,
+   pills for tags, large airy headings. */
+
+:root {
+  /* colour: a soft cool page, white surfaces, one blue */
+  --bg: #f1f3f8;
+  --surface: #ffffff;
+  --tile: #ffffff;
+  --tile-2: #eef1f6;
+  --ink: #111318;
+  --ink-2: #555b68;   /* 6.6:1 on white, 6.0:1 on the page */
+  --ink-3: #6a707b;   /* 5.0:1 on white, 4.6:1 on the page */
+  --soft: rgba(17, 19, 24, 0.05);   /* fills for pills, hovers, the current nav item */
+  --line: rgba(17, 19, 24, 0.08);   /* only for the timeline in the Vlife case */
+  --accent: #2766ea;        /* 5.0:1 with white text */
+  --accent-ink: #1f57d0;    /* accent as text on white: 6.3:1 */
+  --on-accent: #ffffff;
+  --shadow-1: 0 1px 2px rgba(17, 19, 24, 0.04), 0 4px 12px -6px rgba(17, 19, 24, 0.08);
+  --shadow-2: 0 2px 6px -2px rgba(17, 19, 24, 0.05), 0 24px 48px -22px rgba(17, 19, 24, 0.2);
+  --shadow-pop: 0 10px 24px -12px rgba(17, 19, 24, 0.12), 0 40px 80px -28px rgba(17, 19, 24, 0.3);
+
+  /* Names the v4 case-study styles use, mapped onto this palette. */
+  --paper: var(--surface);
+  --paper-2: var(--tile-2);
+  --night: var(--ink);
+  --on-night: var(--bg);
+  --line-strong: var(--line);
+
+  /* app layout: the sidebar is a card --gap off the window edges; the page starts after it */
+  --gap: 12px;
+  --side-w: 288px;
+  --side: calc(var(--side-w) + 2 * var(--gap));
+  --bar: 0px;   /* what is fixed over the top of the page (nothing on wide screens): sticky offsets use this */
+
+  /* grid: one 12-column grid in the page column */
+  --max: 1600px;
+  --gutter: clamp(24px, 3.2vw, 64px);
+  --col-gap: clamp(16px, 1.6vw, 24px);
+  --section: clamp(104px, 11vw, 200px);
+
+  /* shape: cards 24px; things inside a card sit 8px in, so their 16px corners stay concentric; controls 12px */
+  --radius: 24px;
+  --tile-pad: 8px;
+  --radius-in: calc(var(--radius) - var(--tile-pad));
+  --radius-ctl: 12px;
+  --radius-band: 28px;
+  --tile-line: transparent;
+
+  /* type scale: 7 styles, 2 weights (400 / 500). Large type stays regular, as in the reference.
+     The largest follows the page column's width (cqi), so the greeting keeps its three lines. */
+  --t-xl: clamp(40px, 6.2cqi, 96px);
+  --t-l: clamp(28px, 2.5vw, 42px);
+  --t-m: clamp(19px, 1.45vw, 23px);
+  --t-lead: clamp(17px, 1.25vw, 20px);
+  --t-body: 16px;
+  --t-small: 14px;
+  --t-label: 13px;
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+/* overflow-anchor: none, as in v4: scroll anchoring knocked `/#section` deep links off target. */
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--bar) + 24px); overflow-anchor: none; }
+body {
+  margin: 0;
+  color: var(--ink);
+  background-color: var(--bg);
+  /* two faint washes of colour, fixed to the window */
+  background-image:
+    radial-gradient(900px 640px at 92% -8%, rgba(39, 102, 234, 0.09), transparent 62%),
+    radial-gradient(760px 560px at 30% 108%, rgba(236, 120, 170, 0.07), transparent 62%);
+  background-attachment: fixed;
+  font-family: 'Geist', system-ui, sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+::selection { background: var(--accent); color: var(--on-accent); }
+
+/* Resets in :where(), so they weigh nothing and any component class overrides them (padding on a button, say). */
+.v5 { font-size: var(--t-body); line-height: 1.6; }
+:where(.v5) a { color: inherit; text-decoration: none; }
+:where(.v5) :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
+:where(.v5) button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: inherit; }
+:where(.v5) :is(h1, h2, h3, p, blockquote, figure, dl, dd) { margin: 0; }
+:where(.v5) :is(ol, ul) { list-style: none; margin: 0; padding: 0; }
+:where(.v5) img { max-width: 100%; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- type styles (the only place sizes are set) ---------- */
+
+.t-xl    { font-size: var(--t-xl);    line-height: 1.08; letter-spacing: -0.04em;  font-weight: 400; text-wrap: balance; }
+.t-l     { font-size: var(--t-l);     line-height: 1.16; letter-spacing: -0.03em;  font-weight: 400; text-wrap: balance; }
+.t-m     { font-size: var(--t-m);     line-height: 1.3;  letter-spacing: -0.02em;  font-weight: 500; }
+.t-lead  { font-size: var(--t-lead);  line-height: 1.6;  letter-spacing: -0.01em;  text-wrap: pretty; }
+.t-body  { font-size: var(--t-body);  line-height: 1.65; letter-spacing: -0.005em; }
+.t-small { font-size: var(--t-small); line-height: 1.5;  letter-spacing: 0; }
+.t-label { font-size: var(--t-label); line-height: 1.3;  letter-spacing: 0; font-weight: 500; color: var(--ink-3); }
+.w-500 { font-weight: 500; }
+.muted { color: var(--ink-2); }
+
+.pill {
+  display: inline-flex; align-items: center; height: 28px; padding: 0 12px;
+  border-radius: 999px; background: var(--soft);
+  color: var(--ink); font-weight: 400; white-space: nowrap;
+}
+
+/* ---------- layout primitives ---------- */
+
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--col-gap); }
+
+/* A card: white on the tinted page. Hover lifts it with a soft shadow. */
+.tile { background: var(--tile); border-radius: var(--radius); transition: box-shadow 400ms var(--ease-soft), transform 400ms var(--ease-soft); }
+/* Cards that also reveal on scroll keep both transitions: the reveal with its stagger, the hover without. */
+.tile[data-reveal] {
+  transition: opacity 800ms var(--ease) var(--d, 0ms), transform 800ms var(--ease) var(--d, 0ms), box-shadow 400ms var(--ease-soft) 0ms;
+}
+
+/* Image frames: the picture (a lazy <img>) covers the frame; until it loads, or while no file is set, the frame
+   shows a hatched placeholder. */
+.media {
+  position: relative; overflow: hidden;
+  border-radius: var(--radius);
+  background-color: var(--tile-2);
+  background-image: repeating-linear-gradient(135deg, transparent 0 14px, rgba(17, 19, 24, 0.04) 14px 15px);
+}
+.media > img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* Reveal on scroll. Driven by a data attribute (not a class) so React re-renders don't reset it. */
+[data-reveal] { opacity: 0; transform: translateY(16px); transition: opacity 800ms var(--ease), transform 800ms var(--ease); transition-delay: var(--d, 0ms); }
+[data-reveal][data-in] { opacity: 1; transform: none; }
+
+.skip {
+  position: fixed; z-index: 90; left: 12px; top: 12px; padding: 10px 14px;
+  border-radius: var(--radius-ctl); background: var(--ink); color: var(--surface);
+  transform: translateY(-160%); transition: transform 200ms var(--ease);
+}
+.skip:focus-visible { transform: none; }
+
+/* ---------------- Shell ---------------- */
+
+/* z-index scale: menu button 30, sidebar 40, its scrim 35, case preview 50, toast 70, skip link 90. */
+
+.app { margin-left: var(--side); min-height: 100dvh; display: flex; flex-direction: column; }
+
+.app__main { flex: 1; container: page / inline-size; }
+
+/* Page transitions: the page that leaves drifts up and fades; the next one rises in from below.
+   Fill mode `backwards` only: once done, the page keeps no transform (which would trap sticky and fixed children). */
+.view { animation: view-in 700ms var(--ease) backwards; }
+.view.is-out { animation: view-out 280ms cubic-bezier(0.4, 0, 1, 1) forwards; pointer-events: none; }
+@keyframes view-in { from { opacity: 0; transform: translateY(40px); } }
+@keyframes view-out { to { opacity: 0; transform: translateY(-28px); } }
+
+.foot { padding-top: 56px; padding-bottom: 40px; }
+
+/* Sidebar: a white card floating --gap off the window edges. */
+.side {
+  position: fixed; z-index: 40; top: var(--gap); bottom: var(--gap); left: var(--gap); width: var(--side-w);
+  display: flex; flex-direction: column;
+  padding: 20px 16px;
+  border-radius: 28px;
+  background: var(--surface);
+  box-shadow: 0 1px 2px rgba(17, 19, 24, 0.03), 0 16px 40px -24px rgba(17, 19, 24, 0.16);
+  overflow-y: auto; overscroll-behavior: contain; isolation: isolate;
+  scrollbar-width: none;
+}
+.side::-webkit-scrollbar { display: none; }
+
+.plaque {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  min-height: 48px; padding: 8px 8px 8px 14px;
+  border-radius: 16px; background: var(--bg); color: var(--ink);
+  transition: background-color 200ms var(--ease), color 200ms var(--ease);
+}
+
+.plaque:hover { background: #e8ebf2; }
+
+.plaque[aria-current='page'] { background: var(--ink); color: var(--surface); }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px 0 8px;
+  border-radius: 999px; background: var(--soft); color: var(--ink); font-weight: 400; white-space: nowrap;
+}
+
+/* Toast */
+.toast {
+  position: fixed; z-index: 70; left: calc(50% + var(--side) / 2); bottom: 24px;
+  display: flex; align-items: center; gap: 8px; padding: 12px 18px 12px 14px;
+  border-radius: 999px; background: var(--ink); color: var(--surface);
+  box-shadow: var(--shadow-pop);
+  opacity: 0; transform: translate(-50%, 12px); pointer-events: none;
+  transition: opacity 260ms var(--ease), transform 360ms var(--ease);
+}
+.toast svg { color: #9db8ff; }
+.toast.is-on { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------------- Shared page parts ---------------- */
+
+.block { padding-top: var(--section); }
+.head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: clamp(28px, 3vw, 48px); }
+
+/* Project card: the cover sits in an inset frame (8px of the card around it); text under it. */
+.card { height: 100%; display: flex; flex-direction: column; padding: var(--tile-pad); }
+.card__frame { display: block; overflow: hidden; border-radius: var(--radius-in); aspect-ratio: 16 / 10; }
+.card__image { width: 100%; height: 100%; border-radius: 0; transition: transform 900ms var(--ease); }
+.card__body { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 20px 18px 18px; }
+.card__summary { display: block; text-wrap: pretty; }
+
+.card__name { display: inline-flex; align-items: center; gap: 8px; }
+.card__arrow { flex: none; color: var(--ink-3); transition: transform 450ms var(--ease), color 300ms var(--ease); }
+.card__meta { color: var(--ink-3); }
+.pg__groups { display: flex; flex-direction: column; gap: clamp(72px, 8vw, 128px); }
+.pg__group-head { display: flex; flex-direction: column; gap: 6px; margin-bottom: clamp(24px, 2.6vw, 40px); }
+
+@media (hover: hover) {
+  .card:hover { box-shadow: var(--shadow-2); }
+  .card:hover .card__image { transform: scale(1.03); }
+  
+  
+  .card:hover .card__arrow { color: var(--ink); transform: translate(3px, -3px); }
+}
+
+/* ---------------- Home ---------------- */
+
+@keyframes focus-in { from { opacity: 0; filter: blur(18px); transform: translateY(0.2em) scale(0.98); } }
+
+/* Experience: open rows, no cards. The company large with its role and dates as pills; what it does on the right. */
+.jobs { display: flex; flex-direction: column; gap: clamp(40px, 4vw, 64px); }
+.job { align-items: start; row-gap: 16px; }
+
+.job .pill { background: var(--surface); }
+
+.shots { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--col-gap); }
+
+/* ---------------- All projects ---------------- */
+
+.pg { padding-top: clamp(56px, 8vw, 144px); }
+.pg__head { display: flex; flex-direction: column; gap: 20px; }
+.pg__head p { max-width: 48ch; }
+.pg__bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: clamp(40px, 4.4vw, 72px) 0 24px; }
+
+/* Segmented control: tabs for the filter, toggles for the view. */
+.seg { display: inline-flex; gap: 2px; padding: 4px; border-radius: 999px; background: rgba(17, 19, 24, 0.045); }
+.seg__btn { display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 16px; border-radius: 999px; color: var(--ink-2); transition: background-color 200ms var(--ease), color 200ms var(--ease), box-shadow 200ms var(--ease); }
+.seg__btn.is-icon { width: 38px; padding: 0; justify-content: center; }
+.seg__btn:hover { color: var(--ink); }
+.seg__btn[aria-selected='true'], .seg__btn[aria-pressed='true'] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-1); }
+.seg__count { font-weight: 400; }
+
+.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--col-gap); }
+
+.row {
+  display: grid; grid-template-columns: 112px minmax(0, 1fr) minmax(0, 260px) 104px 24px; align-items: center; gap: 24px;
+  padding: 8px 16px 8px 8px; border-radius: var(--radius-in);
+  transition: background-color 200ms var(--ease);
+}
+
+.row:hover { background: var(--bg); }
+
+/* ---------------- Responsive ---------------- */
+
+/* Below 1100px the sidebar folds away behind a menu button in the corner and slides in over the page. */
+@media (max-width: 1100px) {
+  :root { --side: 0px; }
+  :root { --bar: 64px; }
+  
+  
+  .app__main { padding-top: 40px; }
+  .side {
+    width: min(320px, calc(100vw - 2 * var(--gap)));
+    box-shadow: var(--shadow-pop);
+    transform: translateX(calc(-100% - 2 * var(--gap))); visibility: hidden;
+    transition: transform 460ms var(--ease-soft), visibility 0s linear 460ms;
+  }
+  .side.is-open { transform: none; visibility: visible; transition: transform 460ms var(--ease-soft), visibility 0s; }
+  
+  
+  html.is-menu { overflow: hidden; }
+  
+}
+
+@container page (max-width: 900px) {
+  
+  
+  .row { grid-template-columns: 96px minmax(0, 1fr) 24px; }
+  
+}
+
+/* Phones: the greeting may wrap, the portrait goes under it. */
+@container page (max-width: 640px) {
+  
+  
+  
+  .cards { grid-template-columns: minmax(0, 1fr); }
+  
+  .head { align-items: center; }
+  /* Photos: a strip that scrolls sideways, each photo two-thirds of the screen wide. */
+  .shots {
+    display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+    margin: 0 calc(-1 * var(--gutter)); padding: 0 var(--gutter); scroll-padding: 0 var(--gutter);
+  }
+  .shots::-webkit-scrollbar { display: none; }
+  
+  .row { grid-template-columns: 80px minmax(0, 1fr); gap: 14px; }
+  
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  [data-reveal] { opacity: 1; transform: none; }
+}

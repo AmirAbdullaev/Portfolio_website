@@ -1,12 +1,9 @@
-import { Contacts, GridOverlay, TopBar, reveal, useHashScroll, useReveal } from './shared'
-import { CaseHero, Chapter, Facts, Figure, FigureRow, Figures, HOME, OtherProjects, StackTile } from './case'
-import './v4.css'
+import { CaseHero, Chapter, Figure, FigureRow, Figures, StackTile, Text, CasePage } from './case'
 import './case.css'
 
 // Case study: Q-sight, a B2B inspection tool for Qmobile. Content from the Behance project "Qmobile | Mobile app",
 // laid out with the same blocks as the other case studies.
 
-const TITLE = 'Q-sight'
 
 const PROBLEM = [
   { title: 'Standards at every site', text: 'A company with many filling stations and shops has to know that each one keeps to its standards — around the clock, not only on the day of an audit.' },
@@ -77,57 +74,49 @@ const RESULTS: FigureRow[] = [
 /* ---------- page ---------- */
 
 export default function ProjectQsight() {
-  useReveal()
-  useHashScroll()
   return (
-    <div className="v4">
-      <TopBar home={HOME} />
-      <main>
-        <CaseHero
-          lines={['Q-sight', 'Inspection', 'platform']}
-          image="/assets/qsight-hero.webp"
-          position="center 20%"
-          label="A phone with the Q-sight profile screen standing on a tiled cube against a blue wall"
-        />
+    <CasePage>
+      <CaseHero
+        lines={['Q-sight', 'Inspection', 'platform']}
+        image="/assets/qsight-hero.webp"
+        position="center 20%"
+        label="A phone with the Q-sight profile screen standing on a tiled cube against a blue wall"
+        facts={[
+          { label: 'Role', value: 'UX/UI designer' },
+          { label: 'Platform', value: 'iOS · Android · Desktop' },
+        ]}
+      >
+        <p className="cs-lede t-lead">Q-sight is a B2B tool by Qmobile that automates the everyday checks at a company’s sites, such as filling stations and shops. It keeps track of whether standards are met and makes every inspection simpler.</p>
+      </CaseHero>
 
-        <Chapter title="Overview">
-          <p className="cs-lede t-lead" {...reveal()}>Q-sight is a B2B tool by Qmobile that automates the everyday checks at a company’s sites, such as filling stations and shops. It keeps track of whether standards are met and makes every inspection simpler.</p>
-          <Facts
-            items={[
-              { label: 'Role', value: 'UX/UI designer' },
-              { label: 'Platform', value: 'iOS · Android · Desktop' },
-            ]}
-          />
-        </Chapter>
+      <Chapter title="The task">
+        <StackTile items={PROBLEM} />
+      </Chapter>
 
-        <Chapter title="The task">
-          <StackTile items={PROBLEM} />
-        </Chapter>
+      <Chapter title="How it was made">
+        <StackTile items={PROCESS} />
+      </Chapter>
 
-        <Chapter title="How it was made">
-          <StackTile items={PROCESS} />
-        </Chapter>
+      <Chapter title="The app" wide intro="From signing in to a finished checklist: what an employee does at a site.">
+        <div className="cs-shots">
+          {FLOWS.map((row) => (
+            <div key={row[0].src} className="cs-shots__row">
+              {row.map(({ width = 1600, height = 1000, ...s }, i) => (
+                <Figure key={s.src} className={`${row.length > 1 ? 'is-6' : 'is-12'} is-on-white`} delay={i * 80} width={width} height={height} {...s} />
+              ))}
+            </div>
+          ))}
+        </div>
+      </Chapter>
 
-        <Chapter title="The app" wide intro="From signing in to a finished checklist: what an employee does at a site.">
-          <div className="cs-shots">
-            {FLOWS.map((row) => (
-              <div key={row[0].src} className="cs-shots__row">
-                {row.map(({ width = 1600, height = 1000, ...s }, i) => (
-                  <Figure key={s.src} className={row.length > 1 ? 'is-6' : 'is-12'} delay={i * 80} width={width} height={height} {...s} />
-                ))}
-              </div>
-            ))}
-          </div>
-        </Chapter>
+      {/* The desktop module exists but is under NDA: named here so the scope of the work is clear, not shown. */}
+      <Chapter title="Desktop module">
+        <Text>Besides the mobile app, I designed a separate desktop module — a large piece of work in its own right. It’s under NDA, so I can’t show it here.</Text>
+      </Chapter>
 
-        <Chapter title="Results" intro="Q-sight went live across a network of filling stations, and the mobile app reached the staff at every one of them.">
-          <Figures items={RESULTS} />
-        </Chapter>
-
-        <OtherProjects current={TITLE} />
-        <Contacts />
-      </main>
-      {import.meta.env.DEV && <GridOverlay />}
-    </div>
+      <Chapter title="Results" intro="Q-sight went live across a network of filling stations, and the mobile app reached the staff at every one of them.">
+        <Figures items={RESULTS} />
+      </Chapter>
+    </CasePage>
   )
 }

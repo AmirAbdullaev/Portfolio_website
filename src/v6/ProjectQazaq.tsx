@@ -1,13 +1,11 @@
 import { CSSProperties, useRef } from 'react'
-import { Contacts, GridOverlay, TopBar, reveal, useHashScroll, useReveal, useStickyFit } from './shared'
-import { ArtDef, Cards, CaseHero, Chapter, Facts, Figure, HOME, OtherProjects, StackTile, Text } from './case'
-import './v4.css'
+import { useStickyFit } from './shared'
+import { ArtDef, Cards, CaseHero, Chapter, Figure, StackTile, Text, CasePage } from './case'
 import './case.css'
 
 // Case study: Qazaq Energy Charge, the screen on an EV charging station. Content from the Behance project
 // "Design interface for Qazaq Energy Charge", laid out with the same blocks as the other case studies.
 
-const TITLE = 'Qazaq Energy Charge'
 
 /**
  * Outline drawings for the network tiles, in the style of the other case studies.
@@ -185,121 +183,109 @@ function ScreenTour() {
 /* ---------- page ---------- */
 
 export default function ProjectQazaq() {
-  useReveal()
-  useHashScroll()
   return (
-    <div className="v4">
-      <TopBar home={HOME} />
-      <main>
-        <CaseHero
-          lines={['Qazaq', 'Energy', 'Charge']}
-          image="/assets/project-qazaq-energy.webp"
-          position="center 30%"
-          label="A Qazaq Energy Charge station with a CCS2 connector being plugged into a car"
+    <CasePage>
+      <CaseHero
+        lines={['Qazaq', 'Energy', 'Charge']}
+        image="/assets/project-qazaq-energy.webp"
+        position="center 30%"
+        label="A Qazaq Energy Charge station with a CCS2 connector being plugged into a car"
+        devices={['EV charging station']}
+        facts={[
+          { label: 'Role', value: 'Product designer' },
+          { label: 'Display', value: '800 × 400 px' },
+        ]}
+      >
+        <p className="cs-lede t-lead">Qazaq Energy Charge is one of the largest EV charging networks in Kazakhstan, with 80 and 160 kW chargers. I redesigned the interface on the screen of its charging stations.</p>
+      </CaseHero>
+
+      <Chapter title="The network" wide intro="Drivers start a charge in the Vlife app and follow it on the station’s screen.">
+        <Cards items={NETWORK} art={ART} />
+        <Text>Since charging starts in the app, the station screen has a narrower job: show which connector is free, help the driver start, and let them follow the charge without reaching for their phone.</Text>
+      </Chapter>
+
+      <Chapter title="The problem">
+        <StackTile items={PROBLEM} />
+      </Chapter>
+
+      <Chapter title="Goals">
+        <StackTile items={GOALS} />
+      </Chapter>
+
+      <Chapter title="The main screen" wide intro="The screen is split in two: one panel for each connector.">
+        <ScreenTour />
+      </Chapter>
+
+      <Chapter title="A charging session" wide intro="At every step the status changes its colour and its text, and the panel shows only that step’s data.">
+        <div className="cs-shots">
+          <div className="cs-shots__row">
+            <Figure
+              className="is-6"
+              pad
+              src="/assets/qec-charging.webp"
+              width={2308}
+              height={1152}
+              alt="Connector A charging: an orange Charging chip, a progress bar at 82% with 1 h 40 min left, 67 kW power, 5 minutes since the start and a More button"
+              caption="Charging: battery level, time left, current power and time since the start"
+            />
+            <Figure
+              className="is-6"
+              pad
+              delay={80}
+              src="/assets/qec-details.webp"
+              width={2308}
+              height={1154}
+              alt="The More panel for a charging connector: car data — battery capacity, current, voltage, power and battery temperature — and station data — maximum current and voltage"
+              caption="More opens the car and station data, with a way back"
+            />
+          </div>
+          <div className="cs-shots__row">
+            <Figure
+              className="is-6"
+              pad
+              src="/assets/qec-finished.webp"
+              width={2308}
+              height={1154}
+              alt="Connector A charged: a green Charged chip, a full bar at 100%, 67.213 kWh delivered, 1 h 40 min charging time, a cost of 3,543 tenge and a prompt to unplug the connector"
+              caption="Done: energy delivered, charging time and cost, then a prompt to return the connector. Once it’s back, the panel resets."
+            />
+            <Figure
+              className="is-6"
+              pad
+              delay={80}
+              src="/assets/qec-error.webp"
+              width={1142}
+              height={570}
+              alt="Connector A in error: a red Error chip and a message that the connection to the car failed, asking to contact support; connector B is still free"
+              caption="An error stays on its own panel: the driver sees what happened and who to call, and the other connector keeps working"
+            />
+          </div>
+        </div>
+      </Chapter>
+
+      <Chapter title="Before and after" wide intro="The new screen is rolling out across the network; the old one still runs on some stations.">
+        <div className="cs-shots">
+          {BEFORE_AFTER.map(({ before, after }) => (
+            <div key={before.src} className="cs-shots__row">
+              <Figure className="is-6 is-photo" pad tag="Before" {...before} />
+              <Figure className="is-6" pad tag="After" delay={80} {...after} />
+            </div>
+          ))}
+        </div>
+        <Text>Photos of the old screen come from drivers’ reviews on 2GIS and from the original case study.</Text>
+      </Chapter>
+
+      <Chapter title="The outcome">
+        <StackTile items={OUTCOME} />
+        <Figure
+          pad
+          src="/assets/qec-station.webp"
+          width={1596}
+          height={1197}
+          alt="The front of a Qazaq Energy Charge station with the new interface on its screen, next to the card reader"
+          caption="The new interface on the station, now live on part of the network"
         />
-
-        <Chapter title="Overview">
-          <p className="cs-lede t-lead" {...reveal()}>Qazaq Energy Charge is one of the largest EV charging networks in Kazakhstan, with 80 and 160 kW chargers. I redesigned the interface on the screen of its charging stations.</p>
-          <Facts
-            items={[
-              { label: 'Role', value: 'Product designer' },
-              { label: 'Display', value: '800 × 400 px' },
-            ]}
-          />
-        </Chapter>
-
-        <Chapter title="The network" wide intro="Drivers start a charge in the Vlife app and follow it on the station’s screen.">
-          <Cards items={NETWORK} art={ART} />
-          <Text>Since charging starts in the app, the station screen has a narrower job: show which connector is free, help the driver start, and let them follow the charge without reaching for their phone.</Text>
-        </Chapter>
-
-        <Chapter title="The problem">
-          <StackTile items={PROBLEM} />
-        </Chapter>
-
-        <Chapter title="Goals">
-          <StackTile items={GOALS} />
-        </Chapter>
-
-        <Chapter title="The main screen" wide intro="The screen is split in two: one panel for each connector.">
-          <ScreenTour />
-        </Chapter>
-
-        <Chapter title="A charging session" wide intro="At every step the status changes its colour and its text, and the panel shows only that step’s data.">
-          <div className="cs-shots">
-            <div className="cs-shots__row">
-              <Figure
-                className="is-6"
-                pad
-                src="/assets/qec-charging.webp"
-                width={2308}
-                height={1152}
-                alt="Connector A charging: an orange Charging chip, a progress bar at 82% with 1 h 40 min left, 67 kW power, 5 minutes since the start and a More button"
-                caption="Charging: battery level, time left, current power and time since the start"
-              />
-              <Figure
-                className="is-6"
-                pad
-                delay={80}
-                src="/assets/qec-details.webp"
-                width={2308}
-                height={1154}
-                alt="The More panel for a charging connector: car data — battery capacity, current, voltage, power and battery temperature — and station data — maximum current and voltage"
-                caption="More opens the car and station data, with a way back"
-              />
-            </div>
-            <div className="cs-shots__row">
-              <Figure
-                className="is-6"
-                pad
-                src="/assets/qec-finished.webp"
-                width={2308}
-                height={1154}
-                alt="Connector A charged: a green Charged chip, a full bar at 100%, 67.213 kWh delivered, 1 h 40 min charging time, a cost of 3,543 tenge and a prompt to unplug the connector"
-                caption="Done: energy delivered, charging time and cost, then a prompt to return the connector. Once it’s back, the panel resets."
-              />
-              <Figure
-                className="is-6"
-                pad
-                delay={80}
-                src="/assets/qec-error.webp"
-                width={1142}
-                height={570}
-                alt="Connector A in error: a red Error chip and a message that the connection to the car failed, asking to contact support; connector B is still free"
-                caption="An error stays on its own panel: the driver sees what happened and who to call, and the other connector keeps working"
-              />
-            </div>
-          </div>
-        </Chapter>
-
-        <Chapter title="Before and after" wide intro="The new screen is rolling out across the network; the old one still runs on some stations.">
-          <div className="cs-shots">
-            {BEFORE_AFTER.map(({ before, after }) => (
-              <div key={before.src} className="cs-shots__row">
-                <Figure className="is-6 is-photo" pad tag="Before" {...before} />
-                <Figure className="is-6" pad tag="After" delay={80} {...after} />
-              </div>
-            ))}
-          </div>
-          <Text>Photos of the old screen come from drivers’ reviews on 2GIS and from the original case study.</Text>
-        </Chapter>
-
-        <Chapter title="The outcome">
-          <StackTile items={OUTCOME} />
-          <Figure
-            pad
-            src="/assets/qec-station.webp"
-            width={1596}
-            height={1197}
-            alt="The front of a Qazaq Energy Charge station with the new interface on its screen, next to the card reader"
-            caption="The new interface on the station, now live on part of the network"
-          />
-        </Chapter>
-
-        <OtherProjects current={TITLE} />
-        <Contacts />
-      </main>
-      {import.meta.env.DEV && <GridOverlay />}
-    </div>
+      </Chapter>
+    </CasePage>
   )
 }

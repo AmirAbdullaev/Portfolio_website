@@ -1,12 +1,10 @@
-import { Contacts, GridOverlay, TopBar, useHashScroll, useReveal } from './shared'
-import { ArtDef, Cards, CaseHero, Chapter, Facts, Figure, HOME, OtherProjects, StackTile, Text } from './case'
-import './v4.css'
+
+import { ArtDef, Cards, CaseHero, Chapter, Figure, StackTile, Text, CasePage } from './case'
 import './case.css'
 
 // Case study: Arnur Credit, a microfinance app I worked on as a junior designer. Content from the Behance project
 // "Arnur Credit | Mobile Financial App", laid out with the same blocks as the other case studies.
 
-const TITLE = 'Arnur Credit'
 
 /**
  * Outline drawings for the persona tiles, in the style of the other case studies.
@@ -116,54 +114,42 @@ const FLOWS: Shot[][] = [
 /* ---------- page ---------- */
 
 export default function ProjectArnur() {
-  useReveal()
-  useHashScroll()
   return (
-    <div className="v4">
-      <TopBar home={HOME} />
-      <main>
-        <CaseHero
-          lines={['Arnur', 'Credit', 'Mobile app']}
-          image="/assets/arnur-hero.webp"
-          position="55% 50%"
-          label="Two phones with the Arnur Credit app: the home screen and the news feed"
-        />
+    <CasePage>
+      <CaseHero
+        lines={['Arnur', 'Credit', 'Mobile app']}
+        image="/assets/arnur-hero.webp"
+        position="55% 50%"
+        label="Two phones with the Arnur Credit app: the home screen and the news feed"
+        devices={['Mobile']}
+        facts={[
+          { label: 'Role', value: 'Junior product designer' },
+          { label: 'Platform', value: 'iOS · Android' },
+        ]}
+      >
+        <p className="cs-lede t-lead">Arnur Credit is one of the largest microfinance organisations in Kazakhstan. It lends to small businesses and farmers in rural areas of the south. The app lets people apply for a loan, follow their repayments and pay without travelling to an office.</p>
+        <Text>I joined this project as a junior designer. The research and the flows on this page are the part of the work I took part in.</Text>
+      </CaseHero>
 
-        <Chapter title="Overview">
-          <p className="cs-lede t-lead">Arnur Credit is one of the largest microfinance organisations in Kazakhstan. It lends to small businesses and farmers in rural areas of the south. The app lets people apply for a loan, follow their repayments and pay without travelling to an office.</p>
-          <Facts
-            items={[
-              { label: 'Role', value: 'Junior product designer' },
-              { label: 'Platform', value: 'iOS · Android' },
-            ]}
-          />
-          <Text>I joined this project as a junior designer. The research and the flows on this page are the part of the work I took part in.</Text>
-        </Chapter>
+      <Chapter title="Who it’s for" wide intro="Three people the team designed for: their goals, what gets in the way, and what would help.">
+        <Cards items={PERSONAS} art={ART} />
+      </Chapter>
 
-        <Chapter title="Who it’s for" wide intro="Three people the team designed for: their goals, what gets in the way, and what would help.">
-          <Cards items={PERSONAS} art={ART} />
-        </Chapter>
+      <Chapter title="Jobs to be done">
+        <StackTile items={JOBS} />
+      </Chapter>
 
-        <Chapter title="Jobs to be done">
-          <StackTile items={JOBS} />
-        </Chapter>
-
-        <Chapter title="The app" wide intro="From the first launch to a paid instalment, in the order a borrower meets it.">
-          <div className="cs-shots">
-            {FLOWS.map((row) => (
-              <div key={row[0].src} className="cs-shots__row">
-                {row.map(({ width = 1600, height = 1000, ...s }, i) => (
-                  <Figure key={s.src} className={row.length > 1 ? 'is-6' : 'is-12'} delay={i * 80} width={width} height={height} {...s} />
-                ))}
-              </div>
-            ))}
-          </div>
-        </Chapter>
-
-        <OtherProjects current={TITLE} />
-        <Contacts />
-      </main>
-      {import.meta.env.DEV && <GridOverlay />}
-    </div>
+      <Chapter title="The app" wide intro="From the first launch to a paid instalment, in the order a borrower meets it.">
+        <div className="cs-shots">
+          {FLOWS.map((row) => (
+            <div key={row[0].src} className="cs-shots__row">
+              {row.map(({ width = 1600, height = 1000, ...s }, i) => (
+                <Figure key={s.src} className={row.length > 1 ? 'is-6' : 'is-12'} delay={i * 80} width={width} height={height} {...s} />
+              ))}
+            </div>
+          ))}
+        </div>
+      </Chapter>
+    </CasePage>
   )
 }

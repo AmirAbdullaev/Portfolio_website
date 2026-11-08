@@ -1,0 +1,456 @@
+/* Portfolio v6: a split screen on white (v5.css loads first; this retunes its tokens and adds the v6 parts).
+   No tiles, no shadows, no washes: space and type do the work. Geist throughout — headings 500 with tight tracking,
+   body copy thin (300) and a touch larger for reading. The left third is a fixed column about me; the rest is
+   the page. Case studies are the v5 pages, restyled through the tokens below. */
+
+:root {
+  /* colour: white page, near-black ink, greys that still read; soft greys for the blocks inside case studies */
+  --bg: #ffffff;
+  --surface: #f5f5f4;
+  --tile: #f5f5f4;
+  --tile-2: #ededeb;
+  --ink: #0c0c0d;
+  --ink-2: #46464c;   /* body copy: 9.3:1 on white */
+  --ink-3: #6b6b72;   /* labels: 5.3:1 on white */
+  --soft: rgba(12, 12, 13, 0.05);
+  --line: rgba(12, 12, 13, 0.08);
+  --shadow-1: none;
+  --shadow-2: none;
+  --shadow-pop: 0 24px 60px -24px rgba(12, 12, 13, 0.35);
+
+  /* layout: the left column is a full-height third (no inset card any more) */
+  --gap: 0px;
+  --side-w: clamp(360px, 32vw, 620px);   /* was 40vw: the page column gets the room */
+  --radius: 20px;   /* frames and covers: one radius, matching the homepage covers */
+  --pad: clamp(28px, 3.2vw, 60px);   /* the same breathing room on both columns */
+  --gutter: var(--pad);
+
+  --t-l: clamp(30px, 2.7vw, 46px);
+  --t-m: clamp(20px, 1.55vw, 25px);
+  --t-body: 17px;
+
+  --roll: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+body { background: var(--bg); background-image: none; font-family: 'Geist', system-ui, sans-serif; }
+.v6 { font-weight: 300; }
+.v6 :is(.t-xl, .t-l, .t-m) { font-weight: 500; letter-spacing: -0.035em; }
+.v6 .t-m { letter-spacing: -0.02em; }
+.v6 :is(.t-body, .t-lead):not(.w-500) { font-weight: 300; }
+.v6 .t-small:not(.w-500) { font-weight: 400; }
+
+/* ---------------- Motion helpers ---------------- */
+
+/* The left column's blocks rise in one after another on load. */
+[data-rise] { animation: rise 900ms var(--ease) backwards; animation-delay: calc(120ms + var(--i, 0) * 90ms); }
+@keyframes rise { from { opacity: 0; transform: translateY(18px); filter: blur(6px); } }
+
+/* Pill buttons: the label rolls up and a copy rolls in; the icon slides out and back. Primary ink, secondary soft. */
+.pill-btn {
+  display: inline-flex; align-items: center; gap: 12px;
+  height: 48px; padding: 0 22px; border-radius: 999px;
+  white-space: nowrap; overflow: hidden;
+  transition: background-color 300ms var(--ease), transform 200ms var(--ease);
+}
+.pill-btn:has(.pill-btn__icon) { padding-right: 8px; }
+.pill-btn:active { transform: scale(0.97); }
+.v6 .pill-btn.is-primary { background: var(--ink); color: #fff; }
+.v6 .pill-btn.is-secondary { background: var(--surface); color: var(--ink); }
+.v6 .pill-btn.is-secondary:hover { background: var(--tile-2); }
+.pill-btn__roll { display: grid; overflow: hidden; line-height: 1.5; }
+.pill-btn__roll > span { grid-area: 1 / 1; transition: transform 500ms var(--roll); }
+.pill-btn__roll > span + span { transform: translateY(110%); }
+.pill-btn__icon {
+  display: grid; overflow: hidden; place-items: center;
+  width: 32px; height: 32px; border-radius: 50%;
+}
+.is-primary .pill-btn__icon { background: #fff; color: var(--ink); }
+.is-secondary .pill-btn__icon { background: var(--bg); color: var(--ink); }
+.pill-btn__icon > span { grid-area: 1 / 1; display: grid; transition: transform 500ms var(--roll); }
+.pill-btn__icon > span + span { transform: translateX(-160%); }
+@media (hover: hover) {
+  .pill-btn:hover .pill-btn__roll > span:first-child { transform: translateY(-110%); }
+  .pill-btn:hover .pill-btn__roll > span + span { transform: none; }
+  .pill-btn:hover .pill-btn__icon > span:first-child { transform: translateX(160%); }
+  .pill-btn:hover .pill-btn__icon > span + span { transform: none; }
+}
+
+/* ---------------- Left column ---------------- */
+
+.panel {
+  position: fixed; z-index: 40; top: 0; bottom: 0; left: 0; width: var(--side-w);
+  display: flex; flex-direction: column; gap: 56px;
+  padding: var(--pad);
+  background: var(--bg);
+  /* The one line on the page: it tells the two columns apart, since each scrolls on its own. */
+  border-right: 1px solid var(--line);
+  overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none;
+}
+.panel::-webkit-scrollbar { display: none; }
+.panel__top { display: flex; flex-direction: column; gap: clamp(40px, 8vh, 96px); }
+.panel__head { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.panel__id { display: inline-flex; align-items: center; gap: 12px; min-width: 0; }
+
+/* Contact buttons by the name: soft round icons; hover fills them ink and a tooltip names the channel. */
+.social { display: flex; gap: 8px; }
+.social__btn {
+  position: relative; width: 40px; height: 40px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--surface); color: var(--ink);
+  transition: background-color 250ms var(--ease), color 250ms var(--ease), transform 200ms var(--ease);
+}
+.social__btn:active { transform: scale(0.94); }
+.social__btn::after {
+  content: attr(data-tip);
+  position: absolute; top: calc(100% + 8px); left: 50%;
+  padding: 5px 10px; border-radius: 999px;
+  background: var(--ink); color: #fff; font-size: 12px; font-weight: 500; line-height: 1.4; white-space: nowrap;
+  opacity: 0; transform: translate(-50%, -4px); pointer-events: none;
+  transition: opacity 200ms var(--ease), transform 300ms var(--ease);
+}
+@media (hover: hover) {
+  .social__btn:hover { background: var(--ink); color: #fff; }
+  .social__btn:hover::after, .social__btn:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
+}
+.panel__avatar { flex: none; width: 40px; height: 40px; border-radius: 50%; background: var(--surface) 50% 18% / cover no-repeat; }
+.panel__who { display: flex; flex-direction: column; line-height: 1.35; white-space: nowrap; }
+/* Four contacts beside the name on a phone: slightly smaller buttons, so the name stays on one line. */
+@media (max-width: 480px) {
+  .social { gap: 6px; }
+  .social__btn { width: 36px; height: 36px; }
+}
+.panel__intro { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; }
+.panel__hello { max-width: 17ch; text-wrap: balance; }   /* same break on every page: h1 at home, p elsewhere */
+.panel__intro p:not(.panel__hello) { max-width: 42ch; text-wrap: pretty; }
+.panel__intro > div { margin-top: 8px; }
+.panel__label { margin-bottom: 10px; color: var(--ink-3); }
+
+/* Index of case studies: quiet text links. The current one (open, or in view on the homepage) gets ink and a
+   short bar that grows in front of it; hover does the same and shows an arrow. */
+.index-link {
+  display: flex; align-items: flex-start;
+  padding: 7px 0; color: var(--ink-3);
+  transition: color 300ms var(--ease);
+}
+.index-link__bar { flex: none; width: 0; height: 1.5px; margin: 0.75em 0 0; background: currentColor; transition: width 450ms var(--ease), margin 450ms var(--ease); }
+.index-link__text { display: flex; flex-direction: column; gap: 1px; }
+.index-link__name { display: inline-flex; align-items: center; }
+.index-link__devices { color: var(--ink-3); }
+.index-link__go { margin-left: 10px; opacity: 0; transform: translate(-4px, 4px); transition: opacity 300ms var(--ease), transform 450ms var(--ease); }
+.index-link:hover, .index-link.is-current { color: var(--ink); }
+.index-link:hover .index-link__bar, .index-link.is-current .index-link__bar { width: 20px; margin-right: 12px; }
+.index-link:hover .index-link__go { opacity: 1; transform: none; }
+
+.panel__bottom { margin-top: auto; display: flex; flex-direction: column; gap: 32px; }
+.panel__jobs { display: flex; flex-direction: column; gap: 10px; }
+.panel__job { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; }
+/* "Experience" on the left, "Show more" on the right of the same line. */
+.panel__label-row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 10px; }
+.panel__label-row .panel__label { margin-bottom: 0; }
+.panel__job .muted:not(.panel__dates) { grid-column: 1; }
+.panel__dates { grid-column: 2; grid-row: 1; text-align: right; font-variant-numeric: tabular-nums; }
+
+/* ---------------- Right: the page ---------------- */
+
+.app__main { padding-top: 0; }
+
+/* ---------------- Case studies and All projects (the v5 pages, brought to this style) ---------------- */
+/* case.css loads after this file (with the case page), so these rules use .v5.v5.v6 to outweigh its equal selectors. */
+
+/* Text blocks lose their grey tiles: on this page type and space carry the structure, as on the homepage.
+   Tiles that frame imagery (screens, the flow diagram, the decision panels' pictures) keep their soft grey. */
+.v5.v6 :is(.cs-facts, .cs-stack, .cs-card, .cs-figures__row, .cs-reports, .cs-bento__text, .cs-shots__note, .card, .rows) {
+  background: transparent; box-shadow: none;
+}
+.v5.v6 :is(.cs-facts, .cs-stack, .cs-figures__row, .cs-reports, .cs-bento__text, .cs-shots__note) { padding-left: 0; padding-right: 0; }
+.v5.v6 .cs-facts { padding-top: 0; padding-bottom: 0; }
+.v5.v6 .cs-figures__row { min-height: 0; gap: 8px; padding-top: 0; padding-bottom: 0; }
+/* overflow: visible — the card used to crop its corner drawing; with no padding left, the crop clipped the first
+   letters (P, c and p reach a hair past the edge). */
+.v5.v6 .cs-card { padding: 0; min-height: 0; gap: 10px; overflow: visible; }
+
+/* Chapters: the chapter name on the left (cols 1–3, a four-dot mark in the accent), everything else on the right
+   (cols 4–12) and sharing one left edge — statement, text, pictures, figures. Few type sizes: the chapter name,
+   the Overview facts (label and value) and body text are all the body size; only the statements (Overview line,
+   chapter intros) are larger. The accent is the blue; list items read as numbered run-in paragraphs:
+   "01 Business goal The warehouse ran on paper…". Below 640px of page column the name sits on top. */
+.v5.v6 .cs-chapter__inner { row-gap: clamp(20px, 2.4vw, 32px); align-items: start; }
+.v5.v6 .cs-aside { grid-column: 1 / span 3; position: sticky; top: var(--pad); padding-right: 0; gap: 0; }
+.v5.v6 .cs-aside h2 {
+  display: flex; align-items: center; gap: 10px;
+  font-size: var(--t-body); line-height: 1.5; letter-spacing: 0; font-weight: 500; text-indent: 0;
+}
+.v5.v6 .cs-aside h2::before {
+  content: ''; flex: none; width: 10px; height: 10px;
+  background: radial-gradient(circle, var(--accent) 1.6px, transparent 2px) 0 0 / 5px 5px;   /* four dots */
+}
+/* A header with an intro: the intro sits on the right in the first row, the content under it in the second. The
+   header covers both rows (a subgrid both ways), so its chapter name runs down the whole chapter and stays stuck
+   while it scrolls, like the names of chapters without an intro. The content comes later in the page, so it lies
+   above the header's empty area and stays clickable. */
+.v5.v6 .cs-chapter:has(.cs-aside__intro) .cs-aside {
+  grid-column: 1 / -1; grid-row: 1 / span 2; position: static;
+  display: grid; grid-template-columns: subgrid; grid-template-rows: subgrid; align-items: start; gap: normal;
+}
+.v5.v6 .cs-aside h2 { grid-column: 1 / span 3; }
+.v5.v6 .cs-chapter:has(.cs-aside__intro) .cs-aside h2 { grid-row: 1 / span 2; align-self: start; position: sticky; top: var(--pad); }
+.v5.v6 .cs-aside__intro { grid-column: 4 / -1; grid-row: 1; }
+.v5.v6 .cs-chapter:has(.cs-aside__intro) .cs-body { grid-row: 2; }
+/* The content keeps its own 12 columns (blocks inside it still split 7 + 5, 6 + 6), but every block starts at its
+   left edge: no centred figures or offset closing text. */
+.v5.v6 .cs-chapter .cs-body { grid-column: 4 / -1; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--col-gap); }
+.v5.v6 .cs-chapter .cs-body > * { grid-column: 1 / -1; }
+.v5.v6 .cs-body > :is(.cs-text, .cs-reports) { max-width: 64ch; }
+.v5.v6 .cs-reports .cs-dots { grid-template-columns: minmax(0, 1fr); }   /* one column: one edge */
+
+/* Statements: the Overview line and chapter intros, large and in ink. */
+.v5.v6 :is(.cs-lede, .cs-aside__intro) {
+  font-size: var(--t-m); line-height: 1.38; letter-spacing: -0.015em; font-weight: 400; color: var(--ink);
+  max-width: 34ch; text-wrap: pretty;
+}
+.v5.v6 .cs-aside__intro { max-width: 52ch; }
+.v5.v6 .cs-cover__text .cs-lede { max-width: none; }   /* the description fills its column */
+
+/* Overview facts: label and value at the same size, the label in grey. */
+.v5.v6 .cs-facts__row dt { font-size: var(--t-body); line-height: 1.5; font-weight: 300; color: var(--ink-3); }
+.v5.v6 .cs-facts__row dd { font-weight: 400; color: var(--ink); }
+
+/* Numbered run-in items (stacked items and title + text cards alike): the number hangs in the margin, the name in
+   the accent runs into the text — all at the body size. */
+.v5.v6 :is(.cs-stack, .cs-cards) { counter-reset: item; display: flex; flex-direction: column; gap: 22px; }
+.v5.v6 :is(.cs-stack__item, .cs-card) {
+  counter-increment: item; position: relative; display: block; padding: 0 0 0 2.2em; max-width: 64ch;
+}
+.v5.v6 :is(.cs-stack__item, .cs-card)::before {
+  content: counter(item, decimal-leading-zero);
+  position: absolute; left: 0; top: 0;
+  font-weight: 500; color: var(--accent-ink); font-variant-numeric: tabular-nums;
+}
+.v5.v6 :is(.cs-stack__item, .cs-card) h3 {
+  display: inline; margin-right: 0.35em;
+  font-size: 1em; line-height: inherit; font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--accent-ink);
+}
+.v5.v6 :is(.cs-stack__item, .cs-card) p { display: inline; }
+
+@container page (max-width: 640px) {
+  .v5.v6 .cs-chapter .cs-aside, .v5.v6 .cs-aside h2, .v5.v6 .cs-aside__intro { grid-column: 1 / -1; grid-row: auto; position: static; }
+  .v5.v6 .cs-chapter:has(.cs-aside__intro) :is(.cs-aside, .cs-aside h2, .cs-body) { grid-column: 1 / -1; grid-row: auto; position: static; }
+  .v5.v6 .cs-chapter:has(.cs-aside__intro) .cs-aside { display: flex; flex-direction: column; }
+  .v5.v6 .cs-aside__intro { margin-top: 16px; }
+  .v5.v6 .cs-chapter .cs-body { grid-column: 1 / -1; }
+}
+.v5.v6 .cs-card__art { display: none; }   /* the corner drawings belonged to the tiles */
+
+.v5.v6 .pill { height: auto; padding: 0; border-radius: 0; background: none; color: var(--ink-3); }
+.v5.v6 .pill:not(:last-child)::after { content: ','; margin-right: 0.35em; }
+
+/* Cover: the photo itself, rounded like the homepage covers, no frame around it. */
+.v5.v6 .cs-cover { padding-top: var(--pad); }
+.v5.v6 .cs-cover__frame { padding: 0; background: none; border-radius: 20px; overflow: hidden; }
+.v5.v6 .cs-cover__media { border-radius: 0; }
+.v5.v6 .cs-cover__head { margin-bottom: clamp(32px, 3.6vw, 56px); }
+.v5.v6 .cs-cover .cs-facts { gap: 16px; }
+.v5.v6 .cs-cover .cs-facts__row { padding: 0; }
+.v5.v6 .cs-cover__text > .cs-text { max-width: 52ch; }
+
+/* Results: no coloured band; the numbers carry the accent instead. */
+.v5.v6 .cs-chapter.is-accent { background: none; color: inherit; border-radius: 0; }
+.v5.v6 .is-accent .cs-chapter__inner { padding: var(--chapter) 0; }
+
+/* Result figures, after a large-numerals reference: three to a row, the numbers very large and thin, standing on a
+   hairline that runs the whole row and trims their foot; under the line the label in ink and its note in grey.
+   No column gap, so the line is continuous; each figure keeps its distance with right padding instead. */
+.v5.v6 .cs-figures { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(48px, 5vw, 80px) 0; }
+.v5.v6 .cs-figures__row { justify-content: flex-start; gap: 16px; padding: 0 24px 0 0; }
+.v5.v6 .cs-figures__value {
+  display: block;
+  padding-bottom: 0.14em;
+  margin-right: -24px;                       /* the line reaches across the padding to the next figure */
+  font-size: clamp(48px, 6.4cqi, 112px); font-weight: 200; line-height: 0.86; letter-spacing: -0.06em;
+  text-indent: -0.03em;
+  color: var(--ink);
+  border-bottom: 1px solid var(--line-strong);
+}
+/* The row's line ends at the column edge. Digits are tabular, so a number doesn't jitter while it counts up. */
+.v5.v6 .cs-figures__row:is(:last-child, :nth-child(3n)) .cs-figures__value { margin-right: 0; }
+/* Exactly four figures sit two by two rather than three and one. */
+.v5.v6 .cs-figures:has(> :nth-child(4):last-child) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.v5.v6 .cs-figures:has(> :nth-child(4):last-child) > .cs-figures__row:nth-child(2n) .cs-figures__value { margin-right: 0; }
+.v5.v6 .cs-figures:has(> :nth-child(4):last-child) > .cs-figures__row:nth-child(3) .cs-figures__value { margin-right: -24px; }
+.v5.v6 .cs-figures__value { font-variant-numeric: tabular-nums; }
+.v5.v6 .cs-figures__label { gap: 4px; }
+.v5.v6 .cs-figures__label .t-body { font-weight: 500; color: var(--ink); text-wrap: pretty; }
+.v5.v6 .cs-figures__label .t-small { max-width: 32ch; }
+@container page (max-width: 640px) {
+  .v5.v6 .cs-figures { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .v5.v6 .cs-figures__value { font-size: 15cqi; }
+}
+
+/* Decision panels stack on white, without shadows. */
+.v5.v6 .stack__panel { padding: 0; background: var(--bg); box-shadow: none; }   /* picture and text on the content edge */
+.v5.v6 .stack__frame { border-radius: 20px; }
+.v5.v6 .stack__text { padding: 18px 0 10px; }
+
+.v5.v6 .cs-next { padding-top: 0; padding-bottom: clamp(40px, 5vw, 80px); }   /* the last chapter's own bottom space is enough */
+
+/* Next project: one grey plaque holding the text, the arrow and the cover, so it reads as a single link. */
+.v5.v6 .cs-next__card { background: var(--ink); color: #fff; border-radius: var(--radius); }
+.v5.v6 .cs-next__card .muted { color: rgba(255, 255, 255, 0.62); }
+/* The arrow sits in a ring after the name. On hover the plaque stays black: the ring fills white, the arrow turns
+   to point ahead, and the cover drifts closer — one slow, soft movement rather than a colour swap. */
+.v5.v6 .cs-next__title { display: block; }
+.v5.v6 .cs-next__go {
+  display: inline-grid; place-items: center; width: 44px; height: 44px; margin-left: 14px; vertical-align: 0.08em;
+  border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 50%; color: #fff;
+  transition: background-color 500ms var(--ease), border-color 500ms var(--ease), color 500ms var(--ease);
+}
+.v5.v6 .cs-next__go svg { transition: transform 600ms var(--ease); }
+.v5.v6 .cs-next__image { transition: transform 1200ms var(--ease); }
+.v5.v6 .cs-next__card { align-items: stretch; padding: 12px 12px 12px clamp(24px, 2.8vw, 40px); }
+.v5.v6 .cs-next__thumb { aspect-ratio: auto; min-height: 180px; border-radius: 12px; }   /* fills the plaque's height: an even inset all round */
+.v5.v6 .cs-next__text { align-self: center; }
+@media (hover: hover) {
+  .v5.v6 .cs-next__card:hover { background: var(--ink); box-shadow: none; }
+  .v5.v6 .cs-next__card:hover .cs-next__go { background: #fff; border-color: #fff; color: var(--ink); }
+  .v5.v6 .cs-next__card:hover .cs-next__go svg { transform: rotate(45deg); }
+  .v5.v6 .cs-next__card:hover .cs-next__image { transform: scale(1.05); }
+}
+
+/* All projects: cards are the image and the text under it, flush with the column. */
+/* Project cards are grey plaques: the cover inset in them, the text under it inside the same plaque. */
+.v5.v6 .card { padding: 8px; background: var(--tile); border-radius: var(--radius); transition: background-color 300ms var(--ease); }
+.v5.v6 .card__frame { border-radius: 14px; }
+.v5.v6 .card__body { padding: 18px 16px 16px; gap: 0; }
+@media (hover: hover) {
+  .v5.v6 .card:hover { background: var(--tile-2); box-shadow: none; }
+}
+/* The arrow follows the last word of the name, also when the name wraps. */
+.v5.v6 .card__name { display: block; }
+.v5.v6 .card__arrow { display: inline-block; margin-left: 8px; vertical-align: -0.12em; }
+.v5.v6 .card__summary { margin-top: 6px; max-width: 48ch; }
+.v5.v6 .card__meta { margin-top: 14px; }
+.v5.v6 .cards { gap: var(--col-gap); }
+
+/* A group's heading sits close to its cards (and far from the group above): title, its line, then the cards. */
+.v5.v6 .pg__groups { margin-top: clamp(48px, 5vw, 80px); }   /* the first heading clear of the tabs */
+.v5.v6 .pg__group-head { gap: 4px; margin-bottom: 20px; }
+/* Tab counts sit on the label's baseline. */
+.v5.v6 .seg__btn { align-items: baseline; padding-top: 0; padding-bottom: 0; line-height: 38px; }
+.v5.v6 .seg__count { line-height: inherit; }
+
+/* ---------------- Narrow screens ---------------- */
+
+/* Below 1100px the columns stack. The panel's parts join the page flow: intro first, then the page, then
+   experience and contacts. The index is left out (the projects are right there); on a case study the intro is too. */
+@media (max-width: 1100px) {
+  .v6 { display: flex; flex-direction: column; }
+  .panel { display: contents; }
+  .panel__top { order: 1; padding: var(--pad) var(--pad) 0; }
+  .app { order: 2; }
+  .panel__bottom { order: 3; padding: 64px var(--pad) var(--pad); }
+  .panel__index { display: none; }
+  .v6:not(.is-home) .panel__intro { display: none; }
+  .v6 .app__main { padding-top: 0; }
+}
+
+/* Q-sight's slides are phones on white: multiplied over the frame, the white turns into the grey plate. */
+.v5.v6 .cs-fig.is-on-white .cs-fig__frame { background: var(--tile); }
+.v5.v6 .cs-fig.is-on-white img { mix-blend-mode: multiply; }
+
+/* WMS desktop reports on a monitor, on the grey plate the terminal pictures use: a thin dark bezel with a slightly
+   deeper chin, a tapered neck and a flat foot. Sizes are in % of the monitor's width so it scales as one piece. */
+.v5.v6 .cs-monitor { display: flex; flex-direction: column; gap: 12px; }
+.v5.v6 .cs-monitor__plate {
+  display: block; padding: clamp(24px, 4.4cqi, 64px) clamp(20px, 5cqi, 72px) clamp(20px, 3.4cqi, 48px);
+  background: var(--tile); border-radius: var(--radius);
+}
+.v5.v6 .cs-monitor__device { display: flex; flex-direction: column; align-items: center; }
+.v5.v6 .cs-monitor__screen {
+  display: block; width: 100%; padding: 1.3% 1.3% 2.4%;
+  background: #16161a; border-radius: clamp(6px, 1.2cqi, 14px);
+  box-shadow: 0 24px 40px -28px rgba(12, 12, 13, 0.45);
+}
+.v5.v6 .cs-monitor__screen img { display: block; width: 100%; height: auto; border-radius: 2px; }
+.v5.v6 .cs-monitor__neck {
+  display: block; width: 12%; aspect-ratio: 12 / 7;
+  background: linear-gradient(90deg, #bcbcb8, #d9d9d5 50%, #bcbcb8);
+  clip-path: polygon(10% 0, 90% 0, 100% 100%, 0 100%);
+}
+.v5.v6 .cs-monitor__foot {
+  display: block; width: 30%; height: clamp(5px, 0.8cqi, 10px);
+  background: linear-gradient(#d6d6d2, #b4b4b0); border-radius: 2px 2px 8px 8px;
+}
+.v5.v6 .cs-monitor figcaption { color: var(--ink-2); max-width: 60ch; text-wrap: pretty; }
+
+/* WMS backbone flow, top to bottom: a numbered step per row with its drawing in a small grey square, the squares
+   joined by a thin line. Replaces the row of five tiles, which got too narrow in the content column. */
+.v5.v6 .cs-flow { display: flex; flex-direction: column; gap: 0; counter-reset: step; }
+.v5.v6 .cs-flow__item { counter-increment: step; position: relative; display: flex; padding-bottom: 16px; }
+.v5.v6 .cs-flow__item:last-child { padding-bottom: 0; }
+.v5.v6 .cs-flow__item:not(:last-child)::after {
+  content: ''; position: absolute; left: 27.5px; top: 56px; bottom: 0; width: 1px; background: var(--line-strong);
+}
+.v5.v6 .cs-flow .cs-step {
+  flex: 1; display: flex; align-items: center; gap: 20px;
+  min-height: 0; padding: 0; background: none; border-radius: 0; overflow: visible;
+}
+.v5.v6 .cs-flow .cs-step span { font-size: var(--t-body); line-height: 1.5; }
+.v5.v6 .cs-flow .cs-step span::before {
+  content: counter(step, decimal-leading-zero); margin-right: 0.6em;
+  color: var(--accent-ink); font-variant-numeric: tabular-nums;
+}
+.v5.v6 .cs-flow .cs-step__art {
+  position: static; order: -1; flex: none; width: 56px; height: 56px; max-width: none; padding: 14px;
+  background: var(--tile); border-radius: 16px; transform: none;
+}
+
+/* Experience page: the summary under the title, the role and dates as one line, the case studies as arrow links. */
+.v5.v6 .exp__lede { max-width: 48ch; margin-top: clamp(12px, 1.4vw, 20px); }
+.v5.v6 .exp__role { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.v5.v6 .exp__cases { display: flex; flex-direction: column; gap: 8px; }
+.v5.v6 .exp__cases ul { display: flex; flex-wrap: wrap; gap: 6px 24px; }
+
+/* All projects: the selected filter is filled with the accent, so it is obvious which one is on. */
+.v5.v6 .seg { background: var(--surface); }
+.v5.v6 .seg__btn[aria-selected='true'] { background: var(--accent); color: var(--on-accent); box-shadow: none; }
+.v5.v6 .seg__btn[aria-selected='true'] .seg__count { color: rgba(255, 255, 255, 0.75); }
+
+/* About: four photos from outside work, in a row (two by two in a narrow column). */
+.v5.v6 .about__photos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.v5.v6 .about__photo { aspect-ratio: 3 / 4; border-radius: 16px; }
+@container page (max-width: 640px) {
+  .v5.v6 .about__photos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Panel: the fourth row under the jobs, a link to the About page's last part. */
+.panel__outside { color: var(--ink); }
+.panel__outside:hover .text-link { text-decoration-color: currentColor; }
+
+/* About: skills in two columns, education as rows (school and study on the left, the year on the right),
+   the contact buttons in a row. */
+.v5.v6 .about__skills { columns: 2; column-gap: var(--col-gap); }   /* columns, not a grid: no row gaps from a long neighbour */
+.v5.v6 .about__skills li { position: relative; padding-left: 18px; margin-bottom: 10px; break-inside: avoid; text-wrap: pretty; }
+.v5.v6 .about__skills li::before { content: ''; position: absolute; left: 0; top: 0.68em; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.v5.v6 .about__schools { display: flex; flex-direction: column; gap: 18px; max-width: 64ch; }
+.v5.v6 .about__school { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 24px; }
+.v5.v6 .about__school .muted:not(.about__year) { grid-column: 1; }
+.v5.v6 .about__year { grid-column: 2; grid-row: 1; font-variant-numeric: tabular-nums; }
+.v5.v6 .about__contact { display: flex; flex-wrap: wrap; gap: 10px; }
+@container page (max-width: 640px) {
+  .v5.v6 .about__skills { columns: 1; }
+}
+
+/* Facts in a chapter: the first row starts level with the chapter name. */
+.v5.v6 .cs-body .cs-facts__row:first-child { padding-top: 0; }
+
+/* Text links, one style everywhere: ink text on a thin grey underline that darkens on hover. Only a link to another
+   site (it opens a new tab) carries an arrow after its text. The page you are on reads as plain grey text. */
+.text-link {
+  color: var(--ink);
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.28em;
+  text-decoration-color: rgba(12, 12, 13, 0.25);
+  transition: text-decoration-color 250ms var(--ease), color 250ms var(--ease);
+}
+.text-link:hover, .text-link:focus-visible { text-decoration-color: currentColor; }
+.text-link[aria-current='page'] { color: var(--ink-3); text-decoration-color: transparent; }
+.text-link > svg { display: inline-block; margin-left: 4px; vertical-align: -0.1em; }

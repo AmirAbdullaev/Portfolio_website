@@ -3,6 +3,7 @@
 // Internal links are caught here and swapped in without a reload: the old page drifts up and fades out,
 // the new one rises in from below.
 import { ComponentType, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { Analytics, type BeforeSendEvent } from '@vercel/analytics/react'
 import { CASES, routeOf } from './data'
 import { Shell } from './Shell'
 import './base.css'
@@ -18,6 +19,15 @@ const PAGES: Record<string, () => Promise<Module>> = {
   arnur: () => import('./ProjectArnur'),
   about: () => import('./About'),
 }
+
+/**
+ * Vercel Web Analytics lists pages by path, without the query, and every page here is "/" with a query
+ * (?project=wms, ?page=about). So page views are reported under a readable path of their own — /project/wms,
+ * /about — and the dashboard shows each case study separately. The site's own addresses don't change.
+ */
+const analyticsPath = (route: string) => (route === 'home' ? '/' : route === 'about' ? '/about' : `/project/${route}`)
+let reportedPath = analyticsPath(routeOf(window.location))
+const readablePath = (event: BeforeSendEvent): BeforeSendEvent => ({ ...event, url: window.location.origin + reportedPath })
 
 const SITE = 'Amir Abdullaev'
 function titleOf(route: string) {
@@ -120,12 +130,15 @@ export default function App() {
   }, [go])
 
   const { Comp } = page
+  reportedPath = analyticsPath(page.route)
   return (
     <Shell route={page.route}>
       <div key={page.n} className={`view${leaving ? ' is-out' : ''}`}>
         {/* No footer here: the left column (on phones, the end of the page) carries the contacts and experience. */}
         {Comp && <Comp />}
       </div>
+      {/* Visitors and page views, cookie-free, on the live site only. A new path counts as a new page view. */}
+      <Analytics route={reportedPath} path={reportedPath} beforeSend={readablePath} />
     </Shell>
   )
 }

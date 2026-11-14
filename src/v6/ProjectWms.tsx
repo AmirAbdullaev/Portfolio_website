@@ -1,7 +1,7 @@
 import { CSSProperties, Fragment, ReactNode, useEffect, useRef } from 'react'
 import { ArrowRight } from '@phosphor-icons/react'
 import { Media, reveal, useStickyFit } from './shared'
-import { ArtDef, Cards, CaseHero, Chapter, FigureRow, Figures, Photo, StackTile, Text, CasePage } from './case'
+import { ArtDef, Cards, CaseHero, Chapter, DeskShot, FigureRow, Figures, Monitor, Photo, StackTile, Text, CasePage } from './case'
 import './case.css'
 
 // Case study: Warehouse Management System. Content from Claude Design
@@ -87,6 +87,8 @@ const DECISIONS: { title: string; text: string[]; screens?: Screen[]; split?: bo
 ]
 
 const RESULTS: FigureRow[] = [
+  { value: '60+', label: 'Warehouse staff on the terminals', note: 'Every day, across the warehouse roles' },
+  { value: '~10', label: 'Managers on the desktop', note: 'Warehouse leads and plant management' },
   { value: '13', label: 'Warehouse flows in one system', note: 'From container unloading to shipping' },
   { value: '13', label: 'Roles working in the same data', note: 'From the receiving storekeeper to plant management' },
   { value: '100+', label: 'Screens for the handheld terminal', note: 'Every warehouse flow, step by step' },
@@ -94,7 +96,6 @@ const RESULTS: FigureRow[] = [
 ]
 
 /** Two of the desktop reports, shown on a monitor the way the terminal screens are shown on the device. */
-type DeskShot = { src: string; alt: string; caption: string; width: number; height: number }
 const MONITORS: DeskShot[] = [
   { src: '/assets/wms-desk-stock-items.webp', width: 1920, height: 1080, alt: 'Stock by item: physical stock, in the store, in cases, blocked and available, with flags such as Below min', caption: 'Stock by item: physical, in the store, in cases, blocked and available' },
   { src: '/assets/wms-desk-picking-people.webp', width: 1920, height: 1080, alt: 'Picking by employee: tasks, replenishments and deliveries, median time and share within the target', caption: 'Picking by employee: tasks, median time and share within the target' },
@@ -210,21 +211,6 @@ const STEP_ART: Record<StepArt, ReactNode> = {
 }
 
 /** A flow drawn as bento tiles in a row with arrows between them; each tile has its illustration in the corner. */
-/** A desktop screenshot on a monitor: a thin dark bezel, a neck and a foot, on the same grey plate as the terminal pictures. */
-function Monitor({ src, alt, caption, width, height }: DeskShot) {
-  return (
-    <figure className="cs-monitor" {...reveal()}>
-      <span className="cs-monitor__plate">
-        <span className="cs-monitor__device">
-          <span className="cs-monitor__screen"><img src={src} alt={alt} width={width} height={height} loading="lazy" /></span>
-          <span className="cs-monitor__neck" aria-hidden="true" />
-          <span className="cs-monitor__foot" aria-hidden="true" />
-        </span>
-      </span>
-      <figcaption className="t-small">{caption}</figcaption>
-    </figure>
-  )
-}
 
 function Flow({ steps }: { steps: { title: string; art: StepArt }[] }) {
   return (
@@ -393,6 +379,7 @@ export default function ProjectWms() {
 
       <Chapter title="Desktop reports" wide intro="The terminal is for the floor. The warehouse lead and plant management read the same data on desktop: what is in stock, where it is, and what happened to it.">
         {MONITORS.map((s) => <Monitor key={s.src} {...s} />)}
+        <Text>Two of 40+ desktop screens: stock by item and by location, operation history, an item’s whole path, picking tasks and more.</Text>
       </Chapter>
 
       <Chapter title="Validation" wide intro="Rolled out in stages rather than all at once. First the backbone flow:">

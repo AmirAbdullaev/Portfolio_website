@@ -77,6 +77,25 @@ export function Chapter({ title, intro, accent, wide, children }: { title: strin
   )
 }
 
+/** A desktop screen for a monitor: the file, its pixel size, a description for screen readers and a caption. */
+export type DeskShot = { src: string; alt: string; caption: string; width: number; height: number }
+
+export /** A desktop screenshot on a monitor: a thin dark bezel, a neck and a foot, on the same grey plate as the device pictures. */
+function Monitor({ src, alt, caption, width, height }: DeskShot) {
+  return (
+    <figure className="cs-monitor" {...reveal()}>
+      <span className="cs-monitor__plate">
+        <span className="cs-monitor__device">
+          <span className="cs-monitor__screen"><img src={src} alt={alt} width={width} height={height} loading="lazy" /></span>
+          <span className="cs-monitor__neck" aria-hidden="true" />
+          <span className="cs-monitor__foot" aria-hidden="true" />
+        </span>
+      </span>
+      <figcaption className="t-small">{caption}</figcaption>
+    </figure>
+  )
+}
+
 /** Body text in a chapter. */
 export const Text = ({ children }: { children: ReactNode }) => <p className="cs-text t-body muted" {...reveal()}>{children}</p>
 

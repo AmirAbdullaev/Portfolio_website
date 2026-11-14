@@ -1,4 +1,4 @@
-import { CaseHero, Chapter, Figure, FigureRow, Figures, StackTile, Text, CasePage } from './case'
+import { CaseHero, Chapter, DeskShot, Figure, FigureRow, Figures, Monitor, StackTile, Text, CasePage } from './case'
 import './case.css'
 
 // Case study: Q-sight, a B2B inspection tool for Qmobile. Content from the Behance project "Qmobile | Mobile app",
@@ -15,6 +15,12 @@ const PROCESS = [
   { title: 'Competitive analysis', text: 'How similar inspection tools look and what they can do.' },
   { title: 'Architecture', text: 'The app’s structure, wireframes and an interactive prototype.' },
   { title: 'Visual design', text: 'A visual concept and a UI kit, then the final screens, the release and testing.' },
+]
+
+/** Two screens of the desktop admin, shown on a monitor like the WMS reports. Example data from the design file. */
+const DESKTOP: DeskShot[] = [
+  { src: '/assets/qsight-desk-structure.webp', width: 1440, height: 810, alt: 'Company structure: four levels on the left (organisation, branch, region, station) and the tree of regions, cities and stations on the right', caption: 'The company structure: levels on the left, the tree from regions down to stations on the right' },
+  { src: '/assets/qsight-desk-organisations.webp', width: 1440, height: 810, alt: 'Organisations and owners: a table of organisations with owner, BIN, address, phone and email, and a row’s actions menu open', caption: 'Organisations and owners, with each row’s actions at hand' },
 ]
 
 /**
@@ -65,10 +71,10 @@ const FLOWS: Shot[][] = [
 const RESULTS: FigureRow[] = [
   { value: '~370', label: 'Filling stations running Q-sight' },
   { value: '~3,000', label: 'Station staff on the mobile app', note: 'An estimate: about 8 people per station' },
-  { value: '200+', label: 'Screens' },
+  { value: '200+', label: 'Mobile screens', note: 'iOS and Android' },
+  { value: '160+', label: 'Desktop screens', note: 'The admin, every state included' },
   { value: '80+', label: 'Components in the UI kit' },
   { value: '~4', label: 'Months of work', note: 'The desktop version included' },
-  { value: '3', label: 'Platforms', note: 'iOS, Android and desktop' },
 ]
 
 /* ---------- page ---------- */
@@ -109,9 +115,9 @@ export default function ProjectQsight() {
         </div>
       </Chapter>
 
-      {/* The desktop module exists but is under NDA: named here so the scope of the work is clear, not shown. */}
-      <Chapter title="Desktop module">
-        <Text>Besides the mobile app, I designed a separate desktop module — a large piece of work in its own right. It’s under NDA, so I can’t show it here.</Text>
+      <Chapter title="The desktop admin" wide intro="The company runs Q-sight from a desktop admin: its structure from branches down to stations, organisations and owners, staff and positions, checklists, photo reports and analytics.">
+        {DESKTOP.map((s) => <Monitor key={s.src} {...s} />)}
+        <Text>Two of 160+ desktop screens, every state included: sign-in and passwords, organisations and owners, the company structure, staff and positions, checklists, photo reports and analytics.</Text>
       </Chapter>
 
       <Chapter title="Results" intro="Q-sight went live across a network of filling stations, and the mobile app reached the staff at every one of them.">

@@ -9,8 +9,9 @@ import { EXPERIENCE, PORTRAIT } from '../content'
 import { CASES } from './data'
 import { copyText, shortDates, useReveal } from './shared'
 import { Button } from './Button'
+import { Lightbox } from './Lightbox'
 
-const HELLO = 'Hi, I’m Amir. I design B2B SaaS and mobile apps.'
+const HELLO = 'Hi, I’m Amir. I\u00A0design B2B SaaS and mobile apps.'   // "I" stays with "design"
 const INTRO = '4 years of hands-on experience crafting products that drive real results: the digitisation of a whole car plant, loyalty apps and EV charging.'
 
 /** Staggered entrance: each block of the panel rises in a beat after the previous one. */
@@ -67,7 +68,7 @@ function Panel({ route, onCopyEmail }: { route: string; onCopyEmail: () => void 
       </div>
 
       <nav className="panel__index" aria-labelledby="panel-work" {...step(4)}>
-        <h2 id="panel-work" className="panel__label t-small">Work</h2>
+        <h2 id="panel-work" className="panel__label t-body w-500">Work</h2>
         <ul>
           {CASES.map((c) => (
             <li key={c.key}>
@@ -91,7 +92,7 @@ function Panel({ route, onCopyEmail }: { route: string; onCopyEmail: () => void 
           {/* The jobs are a plain list; "Show more" beside the heading opens the About page, and a fourth row after the
               jobs leads to the rest of that page: how I work, skills, education, life outside work. */}
           <div className="panel__label-row">
-            <h2 id="panel-exp" className="panel__label t-small">Experience</h2>
+            <h2 id="panel-exp" className="panel__label t-body w-500">Experience</h2>
             <a className="text-link t-small" href="/?page=about" aria-current={route === 'about' ? 'page' : undefined}>Show more</a>
           </div>
           <ol className="panel__jobs">
@@ -136,6 +137,7 @@ export function Shell({ route, children }: { route: string; children: ReactNode 
     <div className={`v5 v6${route === 'home' ? ' is-home' : ''}`}>
       <a className="skip t-small w-500" href="#content">Skip to content</a>
       <Panel route={route} onCopyEmail={copyEmail} />
+      <Lightbox />
       <div className="app">
         <main id="content" className="app__main">{children}</main>
       </div>

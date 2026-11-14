@@ -123,7 +123,7 @@ body { background: var(--bg); background-image: none; font-family: 'Geist', syst
 .panel__hello { max-width: 17ch; text-wrap: balance; }   /* same break on every page: h1 at home, p elsewhere */
 .panel__intro p:not(.panel__hello) { max-width: 42ch; text-wrap: pretty; }
 .panel__intro > div { margin-top: 8px; }
-.panel__label { margin-bottom: 10px; color: var(--ink-3); }
+.panel__label { margin-bottom: 10px; color: var(--ink); }   /* block headings in the panel: ink, medium, body size */
 
 /* Index of case studies: quiet text links. The current one (open, or in view on the homepage) gets ink and a
    short bar that grows in front of it; hover does the same and shows an arrow. */
@@ -287,7 +287,18 @@ body { background: var(--bg); background-image: none; font-family: 'Geist', syst
 }
 
 /* Decision panels stack on white, without shadows. */
-.v5.v6 .stack__panel { padding: 0; background: var(--bg); box-shadow: none; }   /* picture and text on the content edge */
+.v5.v6 .stack__panel { padding: 0; background: var(--bg); box-shadow: none; border-radius: 0; }   /* picture and text on the content edge */
+.v5.v6 .stack__item + .stack__item .stack__panel { padding-top: 20px; margin-top: -20px; }
+/* While the panels pile up, a taller panel underneath (its text column runs longer than its picture) would show
+   below a shorter one on top. Each later panel carries a white skirt down from its bottom edge; the list clips it,
+   so it never covers what follows the stack, and later panels still lie above it. Only where the panels stick. */
+@container page (min-width: 1025px) {
+  .v5.v6 .stack { overflow: clip; }
+  .v5.v6 .stack__item + .stack__item .stack__panel { position: relative; }
+  .v5.v6 .stack__item + .stack__item .stack__panel::after {
+    content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 100vh; background: var(--bg);
+  }
+}
 .v5.v6 .stack__frame { border-radius: 20px; }
 .v5.v6 .stack__text { padding: 18px 0 10px; }
 
@@ -332,7 +343,9 @@ body { background: var(--bg); background-image: none; font-family: 'Geist', syst
 .v5.v6 .cards { gap: var(--col-gap); }
 
 /* A group's heading sits close to its cards (and far from the group above): title, its line, then the cards. */
-.v5.v6 .pg__groups { margin-top: clamp(48px, 5vw, 80px); }   /* the first heading clear of the tabs */
+.v5.v6 .pg__head { gap: 14px; }
+.v5.v6 .pg__bar { margin: clamp(56px, 6vw, 96px) 0 0; }
+.v5.v6 .pg__groups { margin-top: 32px; }   /* tabs → first heading (All) or first cards (a single kind): one distance */
 .v5.v6 .pg__group-head { gap: 4px; margin-bottom: 20px; }
 /* Tab counts sit on the label's baseline. */
 .v5.v6 .seg__btn { align-items: baseline; padding-top: 0; padding-bottom: 0; line-height: 38px; }
@@ -454,3 +467,33 @@ body { background: var(--bg); background-image: none; font-family: 'Geist', syst
 .text-link:hover, .text-link:focus-visible { text-decoration-color: currentColor; }
 .text-link[aria-current='page'] { color: var(--ink-3); text-decoration-color: transparent; }
 .text-link > svg { display: inline-block; margin-left: 4px; vertical-align: -0.1em; }
+
+/* Lightbox: pictures and composed plates (a device with its labels, a monitor) open large on click; things inside
+   links keep going where they lead. A plate is a styled copy scaled up by --fit; a photo opens as the whole picture. */
+.app__main :is(.stack__frame, .cs-monitor__plate, .cs-fig__frame, .cs-photo, .media) { cursor: zoom-in; }
+.app__main a :is(.media, img) { cursor: pointer; }
+.lightbox {
+  position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: clamp(16px, 4vw, 56px);
+  background: rgba(12, 12, 13, 0.86); cursor: zoom-out; overflow: hidden;
+  opacity: 0; transition: opacity 300ms var(--ease);
+}
+.lightbox.is-on { opacity: 1; }
+.lightbox__picture {
+  max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; border-radius: 12px;
+  transform: scale(0.96); transition: transform 400ms var(--ease);
+}
+.lightbox.is-on .lightbox__picture { transform: none; }
+.lightbox__plate {
+  position: relative; pointer-events: none; user-select: none;
+  transform: scale(calc(var(--fit, 1) * 0.96)); transition: transform 400ms var(--ease);
+}
+.lightbox.is-on .lightbox__plate { transform: scale(var(--fit, 1)); }
+.lightbox__close {
+  position: absolute; top: 16px; right: 16px; width: 44px; height: 44px; border-radius: 50%;
+  display: grid; place-items: center; background: rgba(255, 255, 255, 0.14); color: #fff; cursor: pointer;
+  transition: background-color 250ms var(--ease);
+}
+.lightbox__close:hover { background: rgba(255, 255, 255, 0.26); }
+@media (prefers-reduced-motion: reduce) {
+  .lightbox, .lightbox__picture, .lightbox__plate { transition: none; }
+}
